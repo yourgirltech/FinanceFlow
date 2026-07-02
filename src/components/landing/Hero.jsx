@@ -39,10 +39,14 @@ export default function Hero() {
 
           <div className="flex flex-wrap items-center gap-4 mb-8">
             <Button to="/signup" variant="primary" className="h-12 px-7 text-[15px]">
-              Get started free
+              Get Started Free
             </Button>
-            <Button href="#showcase" variant="secondary" className="h-12 px-7 text-[15px]">
-              See how it works
+            <Button href="#showcase" variant="secondary" className="h-12 px-7 text-[15px] group">
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 -ml-1">
+                <circle cx="12" cy="12" r="9" stroke="#0B1220" strokeWidth="1.6" />
+                <path d="M10 8.5l6 3.5-6 3.5v-7z" fill="#0B1220" />
+              </svg>
+              Watch Demo
             </Button>
           </div>
 

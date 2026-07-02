@@ -12,7 +12,7 @@ export default function CTASection() {
           Free to start. No card required. Set up your first budget in under two minutes.
         </p>
         <Button to="/signup" variant="primary" className="h-12 px-8 text-[15px]">
-          Get started free
+          Get Started Free
         </Button>
       </div>
     </section>
