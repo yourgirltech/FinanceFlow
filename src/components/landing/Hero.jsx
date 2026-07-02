@@ -39,7 +39,7 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mb-8">
-            <Button to="/signup" variant="primary" className="h-12 px-7 text-[15px]">
+            <Button to="/signup" variant="navGold" className="h-12 px-7 text-[15px]">
               Get Started Free
             </Button>
             <Button href="#showcase" variant="secondary" className="h-12 px-7 text-[15px]">
