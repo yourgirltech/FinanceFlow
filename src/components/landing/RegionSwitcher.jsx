@@ -30,7 +30,7 @@ export default function RegionSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-navy-2 border border-line dark:border-white/10 shadow-xl py-2 z-50">
+        <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-navy-2 border border-line dark:border-white/10 shadow-xl py-2 z-50 max-h-80 overflow-y-auto">
           <p className="px-3.5 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-light dark:text-white/35">
             Region &amp; currency
           </p>
