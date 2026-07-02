@@ -6,6 +6,15 @@ export default function SpendingBreakdown({ data }) {
   const { region } = useRegion()
   const total = data.reduce((sum, d) => sum + d.value, 0)
 
+  if (data.length === 0) {
+    return (
+      <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 p-5">
+        <h3 className="font-display font-bold text-navy dark:text-white text-sm mb-4">Spending by category</h3>
+        <p className="text-sm text-slate-light dark:text-white/35 py-10 text-center">No expenses yet this month.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 p-5">
       <h3 className="font-display font-bold text-navy dark:text-white text-sm mb-4">Spending by category</h3>

@@ -11,6 +11,8 @@ const variants = {
     'bg-white text-navy border border-line hover:border-slate-light dark:bg-white/[0.06] dark:text-white dark:border-white/15 dark:hover:border-white/30',
   ghost:
     'bg-transparent text-navy hover:bg-surface dark:text-white/80 dark:hover:bg-white/[0.06]',
+  danger:
+    'bg-red text-white hover:bg-red/90',
 }
 
 export default function Button({

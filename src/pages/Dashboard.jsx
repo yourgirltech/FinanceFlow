@@ -4,7 +4,8 @@ import RecentTransactions from '../components/dashboard/RecentTransactions'
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown'
 import TrendChart from '../components/dashboard/TrendChart'
 import { useRegion } from '../lib/RegionContext'
-import { buildTransactions, buildCategoryBreakdown, buildMonthlyTrend } from '../lib/mockData'
+import { useTransactionsStore } from '../lib/useTransactionsStore'
+import { buildMonthlyTrend, categoryBreakdownFromTransactions, totalsFromTransactions } from '../lib/mockData'
 
 const icons = {
   balance: (
@@ -26,12 +27,14 @@ function Icon({ path }) {
 
 export default function Dashboard() {
   const { region } = useRegion()
-  const { balance, income, expenses } = region.sample
-  const savingsRate = Math.round(((income - expenses) / income) * 100)
+  const { transactions } = useTransactionsStore(region)
+
+  const { income, expenses } = totalsFromTransactions(transactions)
+  const balance = region.sample.balance
+  const savingsRate = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0
   const netWorth = Math.round(balance * 4.4)
 
-  const transactions = buildTransactions(region)
-  const breakdown = buildCategoryBreakdown(region)
+  const breakdown = categoryBreakdownFromTransactions(transactions)
   const trend = buildMonthlyTrend(region)
 
   return (

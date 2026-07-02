@@ -1,10 +1,11 @@
 import AppShell from '../components/app/AppShell'
 import { useRegion } from '../lib/RegionContext'
 import { formatMoney } from '../lib/format'
-import { buildBudgets } from '../lib/mockData'
+import { buildBudgetTargets } from '../lib/mockData'
+import { useTransactionsStore } from '../lib/useTransactionsStore'
 
 function BudgetCard({ budget, region }) {
-  const pct = Math.round((budget.spent / budget.total) * 100)
+  const pct = budget.total > 0 ? Math.round((budget.spent / budget.total) * 100) : 0
   const over = budget.spent > budget.total
   const barColor = over ? 'var(--color-red)' : budget.color
 
@@ -43,10 +44,19 @@ function BudgetCard({ budget, region }) {
 
 export default function Budget() {
   const { region } = useRegion()
-  const budgets = buildBudgets(region)
+  const { transactions } = useTransactionsStore(region)
+  const targets = buildBudgetTargets(region)
+
+  const budgets = targets.map((target) => {
+    const spent = transactions
+      .filter((t) => t.kind === 'expense' && t.category === target.category)
+      .reduce((sum, t) => sum + t.amount, 0)
+    return { ...target, spent }
+  })
+
   const totalBudget = budgets.reduce((s, b) => s + b.total, 0)
   const totalSpent = budgets.reduce((s, b) => s + b.spent, 0)
-  const overallPct = Math.round((totalSpent / totalBudget) * 100)
+  const overallPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
   return (
     <AppShell title="Budget" subtitle="Monthly budgets by category">

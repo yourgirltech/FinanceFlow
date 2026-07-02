@@ -14,6 +14,9 @@ export default function RecentTransactions({ transactions }) {
         </Link>
       </div>
       <div className="space-y-1">
+        {transactions.length === 0 && (
+          <p className="text-sm text-slate-light dark:text-white/35 py-8 text-center">No transactions yet.</p>
+        )}
         {transactions.slice(0, 5).map((t) => (
           <div
             key={t.id}

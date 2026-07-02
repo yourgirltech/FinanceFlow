@@ -32,7 +32,7 @@ const TXN_TEMPLATES = [
   { day: 28, category: 'Food & Dining', desc: 'Coffee & lunch', kind: 'expense', factor: 0.007 },
 ]
 
-function categoryColor(name) {
+export function categoryColor(name) {
   return CATEGORIES.find((c) => c.name === name)?.color ?? 'var(--color-slate)'
 }
 
@@ -51,7 +51,10 @@ export function buildTransactions(region, monthLabel = 'Jun 2026') {
   })).sort((a, b) => (a.fullDate < b.fullDate ? 1 : -1))
 }
 
-export function buildBudgets(region) {
+// Budget targets only — "spent" is now computed live from the actual
+// transactions store, so editing/adding/deleting a transaction on the
+// Transactions page immediately moves the Budget page's progress bars too.
+export function buildBudgetTargets(region) {
   const base = region.sample.income
   const plan = [
     { category: 'Food & Dining', factor: 0.12 },
@@ -61,16 +64,11 @@ export function buildBudgets(region) {
     { category: 'Entertainment', factor: 0.03 },
     { category: 'Health', factor: 0.025 },
   ]
-  return plan.map((p) => {
-    const total = Math.round(base * p.factor)
-    const spentPct = [0.68, 0.42, 0.91, 1.08, 0.35, 0.5][plan.indexOf(p)]
-    return {
-      category: p.category,
-      color: categoryColor(p.category),
-      total,
-      spent: Math.round(total * spentPct),
-    }
-  })
+  return plan.map((p) => ({
+    category: p.category,
+    color: categoryColor(p.category),
+    total: Math.round(base * p.factor),
+  }))
 }
 
 export function buildMonthlyTrend(region) {
@@ -85,10 +83,11 @@ export function buildMonthlyTrend(region) {
   }))
 }
 
-export function buildCategoryBreakdown(region) {
-  const txns = buildTransactions(region)
+// Live derivations — operate on whatever transaction list is passed in
+// (i.e. the localStorage-backed store), not a freshly generated mock set.
+export function categoryBreakdownFromTransactions(transactions) {
   const totals = {}
-  txns
+  transactions
     .filter((t) => t.kind === 'expense')
     .forEach((t) => {
       totals[t.category] = (totals[t.category] || 0) + t.amount
@@ -96,4 +95,10 @@ export function buildCategoryBreakdown(region) {
   return Object.entries(totals)
     .map(([category, value]) => ({ category, value, color: categoryColor(category) }))
     .sort((a, b) => b.value - a.value)
+}
+
+export function totalsFromTransactions(transactions) {
+  const income = transactions.filter((t) => t.kind === 'income').reduce((s, t) => s + t.amount, 0)
+  const expenses = transactions.filter((t) => t.kind === 'expense').reduce((s, t) => s + t.amount, 0)
+  return { income, expenses }
 }
