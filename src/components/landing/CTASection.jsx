@@ -11,7 +11,7 @@ export default function CTASection() {
         <p className="text-slate dark:text-white/60 text-base mb-9 max-w-md mx-auto">
           Free to start. No card required. Set up your first budget in under two minutes.
         </p>
-        <Button to="/signup" variant="navGold" className="h-12 px-8 text-[15px]">
+        <Button to="/signup" variant="navGold" ring className="h-12 px-8 text-[15px]">
           Get Started Free
         </Button>
       </div>

@@ -70,6 +70,68 @@ body {
   outline-offset: 2px;
 }
 
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Animated conic-gradient ring border, used on the primary "Get Started" CTAs
+   (not the navbar one, which stays plain for visual hierarchy). Rotates slowly
+   and pulses a soft gold glow behind it — no extra DOM needed, just ::before. */
+.btn-glow-ring {
+  position: relative;
+  isolation: isolate;
+}
+
+.btn-glow-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--border-angle),
+    var(--color-gold),
+    var(--color-emerald) 30%,
+    var(--color-gold) 55%,
+    transparent 75%,
+    var(--color-gold)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: border-spin 3.2s linear infinite;
+  pointer-events: none;
+}
+
+.btn-glow-ring::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  background: radial-gradient(circle, var(--color-gold) 0%, transparent 70%);
+  filter: blur(10px);
+  opacity: 0.55;
+  animation: glow-pulse 2.4s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.btn-glow-ring:hover::before {
+  animation-duration: 1.4s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
