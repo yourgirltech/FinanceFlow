@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 const variants = {
   primary:
     'bg-navy text-white hover:bg-navy-2 shadow-[0_1px_0_0_rgba(255,255,255,0.08)_inset] dark:bg-white dark:text-navy dark:hover:bg-white/90',
+  navGold:
+    'bg-navy text-gold hover:bg-navy-2 shadow-[0_1px_0_0_rgba(255,255,255,0.08)_inset] dark:bg-white dark:text-gold dark:hover:bg-white/90',
   gold:
     'bg-gold text-navy hover:brightness-95',
   secondary:

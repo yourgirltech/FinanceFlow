@@ -52,7 +52,7 @@ export default function Navbar() {
           <Button to="/login" variant="ghost" className="hidden sm:inline-flex px-4">
             Log in
           </Button>
-          <Button to="/signup" variant="primary">
+          <Button to="/signup" variant="navGold">
             Get Started
           </Button>
         </div>
