@@ -78,10 +78,12 @@ export default function TransactionModal({ open, onClose, onSubmit, initial }) {
             <select
               value={form.category}
               onChange={(e) => update('category', e.target.value)}
-              className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors"
+              className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors [color-scheme:light] dark:[color-scheme:dark]"
             >
               {CATEGORIES.map((c) => (
-                <option key={c.name} value={c.name}>{c.name}</option>
+                <option key={c.name} value={c.name} className="bg-white text-navy dark:bg-navy-2 dark:text-white">
+                  {c.name}
+                </option>
               ))}
             </select>
           </div>
