@@ -1,3 +1,5 @@
+import Reveal from '../Reveal'
+
 const insights = [
   {
     label: 'Spotted a trend',
@@ -36,11 +38,11 @@ export default function InsightSection() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-5">
+        <Reveal delay={100} className="grid sm:grid-cols-3 gap-5">
           {insights.map((insight) => (
             <div
               key={insight.label}
-              className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 hover:bg-white/[0.07] transition-colors duration-300"
+              className="rounded-2xl bg-white/[0.04] border border-white/10 p-6 hover:bg-white/[0.07] hover:-translate-y-1 transition-all duration-300"
             >
               <span className="text-[11px] font-medium text-gold uppercase tracking-wide mb-4 block">
                 {insight.label}
@@ -48,7 +50,7 @@ export default function InsightSection() {
               <p className="text-white text-[15px] leading-relaxed">{insight.text}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   )

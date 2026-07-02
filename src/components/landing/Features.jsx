@@ -1,3 +1,5 @@
+import Reveal from '../Reveal'
+
 const features = [
   {
     title: 'Budgets that adapt',
@@ -45,37 +47,37 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-24 lg:py-32 bg-white">
+    <section id="features" className="py-24 lg:py-32 bg-white dark:bg-navy">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="max-w-xl mb-16">
+        <Reveal className="max-w-xl mb-16">
           <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
             Everything, connected
           </span>
-          <h2 className="font-display font-extrabold text-navy text-3xl sm:text-4xl tracking-tight mb-4">
+          <h2 className="font-display font-extrabold text-navy dark:text-white text-3xl sm:text-4xl tracking-tight mb-4">
             Money management that feels effortless
           </h2>
-          <p className="text-slate text-base leading-relaxed">
+          <p className="text-slate dark:text-white/60 text-base leading-relaxed">
             Finance Flow is built around one idea: you shouldn't need a spreadsheet
             to understand your own money.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line rounded-3xl overflow-hidden border border-line">
+        <Reveal delay={100} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line dark:bg-white/10 rounded-3xl overflow-hidden border border-line dark:border-white/10">
           {features.map((f, i) => (
             <div
               key={f.title}
-              className="bg-white p-8 hover:bg-surface/60 transition-colors duration-300"
+              className="group bg-white dark:bg-navy p-8 hover:bg-surface/60 dark:hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-navy/5 hover:z-10 relative"
             >
-              <div className="h-11 w-11 rounded-xl bg-navy flex items-center justify-center mb-5">
+              <div className="h-11 w-11 rounded-xl bg-navy dark:bg-white/10 flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-105">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#C9A24B" strokeWidth="1.8" className="h-5 w-5">
                   {f.icon}
                 </svg>
               </div>
-              <h3 className="font-display font-bold text-navy text-[17px] mb-2">{f.title}</h3>
-              <p className="text-slate text-[14px] leading-relaxed">{f.desc}</p>
+              <h3 className="font-display font-bold text-navy dark:text-white text-[17px] mb-2">{f.title}</h3>
+              <p className="text-slate dark:text-white/60 text-[14px] leading-relaxed">{f.desc}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   )

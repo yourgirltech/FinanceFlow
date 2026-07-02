@@ -7,17 +7,17 @@ const rows = [
 
 export default function ShowcaseSection() {
   return (
-    <section id="showcase" className="py-24 lg:py-32 bg-surface/50">
+    <section id="showcase" className="py-24 lg:py-32 bg-surface/50 dark:bg-white/[0.02]">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
               How it works
             </span>
-            <h2 className="font-display font-extrabold text-navy text-3xl sm:text-4xl tracking-tight mb-5">
+            <h2 className="font-display font-extrabold text-navy dark:text-white text-3xl sm:text-4xl tracking-tight mb-5">
               Every transaction, sorted the moment it happens
             </h2>
-            <p className="text-slate text-base leading-relaxed mb-8 max-w-md">
+            <p className="text-slate dark:text-white/60 text-base leading-relaxed mb-8 max-w-md">
               Connect an account once. From there, Finance Flow labels, categorises,
               and files every transaction automatically — searchable and filterable
               the second it lands.
@@ -34,7 +34,7 @@ export default function ShowcaseSection() {
                       <path d="M2 6l2.5 2.5L10 3" stroke="#0FA968" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <span className="text-[15px] text-navy/80">{item}</span>
+                  <span className="text-[15px] text-navy/80 dark:text-white/70">{item}</span>
                 </li>
               ))}
             </ul>
@@ -42,32 +42,32 @@ export default function ShowcaseSection() {
 
           <div className="relative">
             <div className="absolute -inset-6 bg-gradient-to-br from-navy/5 to-transparent rounded-[32px] -z-10" />
-            <div className="rounded-2xl bg-white border border-line shadow-2xl shadow-navy/10 overflow-hidden">
-              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-line bg-surface/60">
+            <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 shadow-2xl shadow-navy/10 overflow-hidden transition-transform duration-500 hover:-translate-y-1.5 hover:shadow-navy/15">
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-line dark:border-white/10 bg-surface/60 dark:bg-white/[0.03]">
                 <span className="h-2.5 w-2.5 rounded-full bg-red/60" />
                 <span className="h-2.5 w-2.5 rounded-full bg-gold/60" />
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald/60" />
-                <span className="ml-3 text-[11px] text-slate-light font-tabular">app.financeflow.ng/transactions</span>
+                <span className="ml-3 text-[11px] text-slate-light dark:text-white/30 font-tabular">app.financeflow.ng/transactions</span>
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-bold text-navy text-sm">Recent transactions</h3>
-                  <span className="text-[11px] text-slate-light">Last 7 days</span>
+                  <h3 className="font-display font-bold text-navy dark:text-white text-sm">Recent transactions</h3>
+                  <span className="text-[11px] text-slate-light dark:text-white/30">Last 7 days</span>
                 </div>
                 <div className="space-y-1">
                   {rows.map((r) => (
                     <div
                       key={r.desc}
-                      className="grid grid-cols-[52px_1fr_auto] items-center gap-3 py-2.5 border-b border-line last:border-0"
+                      className="grid grid-cols-[52px_1fr_auto] items-center gap-3 py-2.5 border-b border-line dark:border-white/10 last:border-0"
                     >
-                      <span className="text-[11px] text-slate-light font-tabular">{r.date}</span>
+                      <span className="text-[11px] text-slate-light dark:text-white/30 font-tabular">{r.date}</span>
                       <div>
-                        <p className="text-[13px] text-navy font-medium leading-tight">{r.desc}</p>
-                        <p className="text-[11px] text-slate-light">{r.category}</p>
+                        <p className="text-[13px] text-navy dark:text-white font-medium leading-tight">{r.desc}</p>
+                        <p className="text-[11px] text-slate-light dark:text-white/30">{r.category}</p>
                       </div>
                       <span
                         className={`text-[13px] font-tabular font-semibold ${
-                          r.tone === 'up' ? 'text-emerald' : 'text-navy/70'
+                          r.tone === 'up' ? 'text-emerald' : 'text-navy/70 dark:text-white/70'
                         }`}
                       >
                         {r.amount}

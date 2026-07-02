@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom'
 
 const variants = {
   primary:
-    'bg-navy text-white hover:bg-navy-2 shadow-[0_1px_0_0_rgba(255,255,255,0.08)_inset]',
+    'bg-navy text-white hover:bg-navy-2 shadow-[0_1px_0_0_rgba(255,255,255,0.08)_inset] dark:bg-white dark:text-navy dark:hover:bg-white/90',
   gold:
     'bg-gold text-navy hover:brightness-95',
   secondary:
-    'bg-white text-navy border border-line hover:border-slate-light',
+    'bg-white text-navy border border-line hover:border-slate-light dark:bg-white/[0.06] dark:text-white dark:border-white/15 dark:hover:border-white/30',
   ghost:
-    'bg-transparent text-navy hover:bg-surface',
+    'bg-transparent text-navy hover:bg-surface dark:text-white/80 dark:hover:bg-white/[0.06]',
 }
 
 export default function Button({

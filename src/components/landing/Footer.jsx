@@ -7,6 +7,7 @@ const columns = [
   },
   {
     title: 'Company',
+    id: 'about',
     links: ['About', 'Careers', 'Contact'],
   },
   {
@@ -27,12 +28,16 @@ export default function Footer() {
             </p>
           </div>
           {columns.map((col) => (
-            <div key={col.title}>
+            <div key={col.title} id={col.id}>
               <h4 className="text-white text-sm font-semibold mb-4">{col.title}</h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-white/50 hover:text-white text-sm transition-colors">
+                    <a
+                      href={link === 'Contact' ? '#contact' : '#'}
+                      id={link === 'Contact' ? 'contact' : undefined}
+                      className="text-white/50 hover:text-white text-sm transition-colors"
+                    >
                       {link}
                     </a>
                   </li>
