@@ -1,7 +1,9 @@
 import Button from '../ui/Button'
 import HeroPreviewCard from './HeroPreviewCard'
+import { useRegion } from '../../lib/RegionContext'
 
 export default function Hero() {
+  const { region } = useRegion()
   return (
     <section className="relative overflow-hidden pt-40 pb-28 lg:pt-48 lg:pb-36">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-surface/60 to-white dark:from-white/[0.03] dark:to-navy" />
@@ -11,14 +13,14 @@ export default function Hero() {
         <div className="animate-fade-up">
           <div className="inline-flex items-center gap-2 rounded-full border border-line dark:border-white/10 bg-white dark:bg-white/[0.04] px-3.5 py-1.5 mb-7">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-            <span className="text-xs font-medium text-slate dark:text-white/60">Now tracking accounts across every major Nigerian bank</span>
+            <span className="text-xs font-medium text-slate dark:text-white/60">Now tracking accounts across every major {region.country} bank</span>
           </div>
 
           <h1 className="font-display font-extrabold text-navy dark:text-white text-[40px] leading-[1.08] sm:text-[52px] lg:text-[58px] tracking-tight mb-6">
             See where every
             <br />
             <span className="relative inline-block">
-              naira
+              {region.currencyWord}
               <svg
                 className="absolute -bottom-1 left-0 w-full"
                 viewBox="0 0 200 12"
@@ -54,7 +56,7 @@ export default function Hero() {
             <span className="h-1 w-1 rounded-full bg-line dark:bg-white/20" />
             <span>Bank-level encryption</span>
             <span className="h-1 w-1 rounded-full bg-line dark:bg-white/20" />
-            <span>Built for ₦ accounts</span>
+            <span>Built for {region.symbol} accounts</span>
           </div>
         </div>
 

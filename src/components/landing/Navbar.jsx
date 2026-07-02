@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Logo from './Logo'
 import Button from '../ui/Button'
 import ThemeToggle from './ThemeToggle'
+import RegionSwitcher from './RegionSwitcher'
 import { useTheme } from '../../lib/ThemeContext'
 
 const links = [
@@ -47,7 +48,8 @@ export default function Navbar() {
             </a>
           ))}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <RegionSwitcher />
           <ThemeToggle />
           <Button to="/login" variant="ghost" className="hidden sm:inline-flex px-4">
             Log in

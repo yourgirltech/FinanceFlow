@@ -1,5 +1,6 @@
 import { useCountUp, useInView } from '../../lib/useCountUp'
-import { formatNaira } from '../../lib/format'
+import { formatMoney } from '../../lib/format'
+import { useRegion } from '../../lib/RegionContext'
 import FlowLine from '../FlowLine'
 
 function StatPill({ label, value, tone }) {
@@ -14,8 +15,6 @@ function StatPill({ label, value, tone }) {
   )
 }
 
-// Small donut chart built from static SVG stroke-dasharray segments — a spending
-// breakdown at a glance, echoing the Analytics page this hero is previewing.
 function MiniDonut() {
   const segments = [
     { color: 'var(--color-emerald)', pct: 38 },
@@ -53,7 +52,17 @@ function MiniDonut() {
 
 export default function HeroPreviewCard() {
   const [ref, inView] = useInView({ threshold: 0.2 })
-  const balance = useCountUp(2450000, { duration: 1600, start: inView })
+  const { region } = useRegion()
+  const { sample } = region
+  const balance = useCountUp(sample.balance, { duration: 1600, start: inView })
+  const budgetPct = Math.round((sample.budgetSpent / sample.budgetTotal) * 100)
+  const firstBank = region.banks[0]
+  const bankInitials = firstBank
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <div ref={ref} className="relative animate-float">
@@ -64,7 +73,7 @@ export default function HeroPreviewCard() {
           <div>
             <p className="text-white/50 text-xs mb-1">Total balance</p>
             <p className="font-tabular text-white text-[26px] font-semibold tracking-tight">
-              {formatNaira(balance)}
+              {formatMoney(balance, region)}
             </p>
           </div>
           <div className="flex items-center gap-2.5">
@@ -90,7 +99,6 @@ export default function HeroPreviewCard() {
           <FlowLine className="w-full h-14" />
         </div>
 
-        {/* spending breakdown + stat pills */}
         <div className="flex items-center gap-3 mb-3 rounded-2xl bg-white/[0.06] p-3">
           <MiniDonut />
           <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1.5">
@@ -109,25 +117,23 @@ export default function HeroPreviewCard() {
         </div>
 
         <div className="space-y-2 mb-3">
-          <StatPill label="Income this month" value="+₦840,000" tone="up" />
-          <StatPill label="Expenses this month" value="−₦412,300" tone="down" />
+          <StatPill label="Income this month" value={`+${formatMoney(sample.income, region)}`} tone="up" />
+          <StatPill label="Expenses this month" value={`\u2212${formatMoney(sample.expenses, region)}`} tone="down" />
         </div>
 
-        {/* recent transaction row */}
         <div className="flex items-center justify-between rounded-xl bg-white/[0.06] px-3.5 py-2.5 mb-3">
           <div className="flex items-center gap-2.5">
             <div className="h-7 w-7 rounded-full bg-emerald-soft/20 flex items-center justify-center">
               <span className="text-[11px]">💳</span>
             </div>
             <div>
-              <p className="text-[12.5px] text-white leading-tight">Shoprite, Ikeja</p>
+              <p className="text-[12.5px] text-white leading-tight">{firstBank} purchase</p>
               <p className="text-[10.5px] text-white/40">2 hours ago</p>
             </div>
           </div>
-          <span className="text-[12.5px] font-tabular text-white/80">−₦12,400</span>
+          <span className="text-[12.5px] font-tabular text-white/80">{`\u2212${formatMoney(sample.txn, region)}`}</span>
         </div>
 
-        {/* goal progress */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[11px] text-white/50">Emergency fund goal</span>
@@ -139,24 +145,24 @@ export default function HeroPreviewCard() {
         </div>
       </div>
 
-      {/* floating budget card */}
       <div className="absolute -bottom-8 -left-10 w-44 rounded-2xl bg-white shadow-xl border border-line p-4 -rotate-6 hidden sm:block">
         <p className="text-[11px] text-slate mb-1">Food & Dining</p>
         <div className="h-1.5 rounded-full bg-surface overflow-hidden mb-1.5">
-          <div className="h-full bg-gold rounded-full" style={{ width: '68%' }} />
+          <div className="h-full bg-gold rounded-full" style={{ width: `${budgetPct}%` }} />
         </div>
-        <p className="text-[11px] font-tabular text-navy">₦68,000 <span className="text-slate-light">of ₦100,000</span></p>
+        <p className="text-[11px] font-tabular text-navy">
+          {formatMoney(sample.budgetSpent, region)} <span className="text-slate-light">of {formatMoney(sample.budgetTotal, region)}</span>
+        </p>
       </div>
 
-      {/* floating account cards stack */}
       <div className="absolute -top-7 -right-6 w-40 rounded-2xl bg-white shadow-xl border border-line p-3.5 rotate-6 hidden sm:block">
         <div className="flex items-center gap-2 mb-2">
           <div className="h-6 w-6 rounded-full bg-navy flex items-center justify-center text-white text-[9px] font-bold font-display">
-            GT
+            {bankInitials}
           </div>
           <p className="text-[10.5px] text-slate">•••• 4432</p>
         </div>
-        <p className="text-[13px] font-tabular font-semibold text-navy">₦450,000</p>
+        <p className="text-[13px] font-tabular font-semibold text-navy">{formatMoney(sample.balance * 0.18, region)}</p>
       </div>
     </div>
   )

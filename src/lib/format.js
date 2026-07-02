@@ -1,16 +1,10 @@
-export function formatNaira(value, { compact = false } = {}) {
+// Generic currency formatter driven by the active region.
+export function formatMoney(value, region, { compact = false } = {}) {
   const n = Number(value) || 0
-  if (compact) {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      notation: 'compact',
-      maximumFractionDigits: 1,
-    }).format(n)
-  }
-  return new Intl.NumberFormat('en-NG', {
+  return new Intl.NumberFormat(region.locale, {
     style: 'currency',
-    currency: 'NGN',
-    maximumFractionDigits: 0,
+    currency: region.currency,
+    notation: compact ? 'compact' : 'standard',
+    maximumFractionDigits: compact ? 1 : 0,
   }).format(n)
 }

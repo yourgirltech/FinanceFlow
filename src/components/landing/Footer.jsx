@@ -48,7 +48,7 @@ export default function Footer() {
         </div>
         <div className="pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-white/40 text-xs">© {new Date().getFullYear()} Finance Flow. All rights reserved.</p>
-          <p className="text-white/40 text-xs">Made for people who want to know where their naira goes.</p>
+          <p className="text-white/40 text-xs">Made for people who want to know where their money goes.</p>
         </div>
       </div>
     </footer>

@@ -1,21 +1,28 @@
 import Reveal from '../Reveal'
+import { useRegion } from '../../lib/RegionContext'
+import { formatMoney } from '../../lib/format'
 
-const insights = [
-  {
-    label: 'Spotted a trend',
-    text: 'Your food expenses increased by 14% this month, mostly on weekends.',
-  },
-  {
-    label: 'Goal projection',
-    text: 'Save ₦20,000 more each month and you\'ll reach your goal in 6 months.',
-  },
-  {
-    label: 'Heads up',
-    text: 'You have 3 subscriptions totalling ₦12,600/month you haven\'t opened in 60 days.',
-  },
-]
+function buildInsights(region) {
+  const unit = Math.round(region.sample.income * 0.024)
+  return [
+    {
+      label: 'Spotted a trend',
+      text: 'Your food expenses increased by 14% this month, mostly on weekends.',
+    },
+    {
+      label: 'Goal projection',
+      text: `Save ${formatMoney(unit, region)} more each month and you'll reach your goal in 6 months.`,
+    },
+    {
+      label: 'Heads up',
+      text: `You have 3 subscriptions you haven't opened in 60 days, quietly adding up each month.`,
+    },
+  ]
+}
 
 export default function InsightSection() {
+  const { region } = useRegion()
+  const insights = buildInsights(region)
   return (
     <section id="insights" className="py-24 lg:py-32 bg-navy relative overflow-hidden">
       <div className="absolute inset-0 -z-10 opacity-[0.07]" style={{

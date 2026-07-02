@@ -1,11 +1,21 @@
-const rows = [
-  { date: 'Jun 28', category: 'Salary', desc: 'Monthly payroll', amount: '+₦450,000', tone: 'up' },
-  { date: 'Jun 27', category: 'Transport', desc: 'Uber — Lekki to Ikeja', amount: '−₦8,400', tone: 'down' },
-  { date: 'Jun 25', category: 'Groceries', desc: 'Shoprite, Ikeja City Mall', amount: '−₦34,900', tone: 'down' },
-  { date: 'Jun 24', category: 'Subscriptions', desc: 'Netflix', amount: '−₦4,400', tone: 'down' },
+import { useRegion } from '../../lib/RegionContext'
+import { formatMoney } from '../../lib/format'
+
+const rowTemplates = [
+  { date: 'Jun 28', category: 'Salary', desc: 'Monthly payroll', tone: 'up', factor: 0.5 },
+  { date: 'Jun 27', category: 'Transport', desc: 'Ride to work', tone: 'down', factor: 0.02 },
+  { date: 'Jun 25', category: 'Groceries', desc: 'Weekly grocery run', tone: 'down', factor: 0.08 },
+  { date: 'Jun 24', category: 'Subscriptions', desc: 'Streaming service', tone: 'down', factor: 0.01 },
 ]
 
 export default function ShowcaseSection() {
+  const { region } = useRegion()
+  const base = region.sample.balance * 0.02
+  const rows = rowTemplates.map((r) => ({
+    ...r,
+    amount: `${r.tone === 'up' ? '+' : '\u2212'}${formatMoney(base * (r.factor / 0.02), region)}`,
+  }))
+
   return (
     <section id="showcase" className="py-24 lg:py-32 bg-surface/50 dark:bg-white/[0.02]">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">

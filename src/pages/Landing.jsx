@@ -1,4 +1,5 @@
 import { ThemeProvider, useTheme } from '../lib/ThemeContext'
+import { RegionProvider } from '../lib/RegionContext'
 import Navbar from '../components/landing/Navbar'
 import Hero from '../components/landing/Hero'
 import TrustLogos from '../components/landing/TrustLogos'
@@ -35,7 +36,9 @@ function LandingContent() {
 export default function Landing() {
   return (
     <ThemeProvider>
-      <LandingContent />
+      <RegionProvider>
+        <LandingContent />
+      </RegionProvider>
     </ThemeProvider>
   )
 }
