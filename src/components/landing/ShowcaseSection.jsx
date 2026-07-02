@@ -1,0 +1,85 @@
+const rows = [
+  { date: 'Jun 28', category: 'Salary', desc: 'Monthly payroll', amount: '+₦450,000', tone: 'up' },
+  { date: 'Jun 27', category: 'Transport', desc: 'Uber — Lekki to Ikeja', amount: '−₦8,400', tone: 'down' },
+  { date: 'Jun 25', category: 'Groceries', desc: 'Shoprite, Ikeja City Mall', amount: '−₦34,900', tone: 'down' },
+  { date: 'Jun 24', category: 'Subscriptions', desc: 'Netflix', amount: '−₦4,400', tone: 'down' },
+]
+
+export default function ShowcaseSection() {
+  return (
+    <section id="showcase" className="py-24 lg:py-32 bg-surface/50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
+              How it works
+            </span>
+            <h2 className="font-display font-extrabold text-navy text-3xl sm:text-4xl tracking-tight mb-5">
+              Every transaction, sorted the moment it happens
+            </h2>
+            <p className="text-slate text-base leading-relaxed mb-8 max-w-md">
+              Connect an account once. From there, Finance Flow labels, categorises,
+              and files every transaction automatically — searchable and filterable
+              the second it lands.
+            </p>
+            <ul className="space-y-4">
+              {[
+                'Search and filter by category, date, or amount',
+                'Automatic categorisation, editable in one tap',
+                'Recurring subscriptions flagged for you',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-1 h-4 w-4 rounded-full bg-emerald-soft flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none">
+                      <path d="M2 6l2.5 2.5L10 3" stroke="#0FA968" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="text-[15px] text-navy/80">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="relative">
+            <div className="absolute -inset-6 bg-gradient-to-br from-navy/5 to-transparent rounded-[32px] -z-10" />
+            <div className="rounded-2xl bg-white border border-line shadow-2xl shadow-navy/10 overflow-hidden">
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-line bg-surface/60">
+                <span className="h-2.5 w-2.5 rounded-full bg-red/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-gold/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald/60" />
+                <span className="ml-3 text-[11px] text-slate-light font-tabular">app.financeflow.ng/transactions</span>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-display font-bold text-navy text-sm">Recent transactions</h3>
+                  <span className="text-[11px] text-slate-light">Last 7 days</span>
+                </div>
+                <div className="space-y-1">
+                  {rows.map((r) => (
+                    <div
+                      key={r.desc}
+                      className="grid grid-cols-[52px_1fr_auto] items-center gap-3 py-2.5 border-b border-line last:border-0"
+                    >
+                      <span className="text-[11px] text-slate-light font-tabular">{r.date}</span>
+                      <div>
+                        <p className="text-[13px] text-navy font-medium leading-tight">{r.desc}</p>
+                        <p className="text-[11px] text-slate-light">{r.category}</p>
+                      </div>
+                      <span
+                        className={`text-[13px] font-tabular font-semibold ${
+                          r.tone === 'up' ? 'text-emerald' : 'text-navy/70'
+                        }`}
+                      >
+                        {r.amount}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
