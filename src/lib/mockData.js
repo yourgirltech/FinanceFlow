@@ -36,6 +36,37 @@ export function categoryColor(name) {
   return CATEGORIES.find((c) => c.name === name)?.color ?? 'var(--color-slate)'
 }
 
+export function categoryKind(name) {
+  return CATEGORIES.find((c) => c.name === name)?.kind ?? 'expense'
+}
+
+// Shared by Quick Add and Import Statement — maps a loose keyword found in a
+// description to one of our real categories. First match wins.
+const KEYWORD_MAP = {
+  food: 'Food & Dining', lunch: 'Food & Dining', dinner: 'Food & Dining', breakfast: 'Food & Dining',
+  groceries: 'Food & Dining', grocery: 'Food & Dining', restaurant: 'Food & Dining', coffee: 'Food & Dining',
+  salary: 'Salary', payroll: 'Salary', wage: 'Salary', wages: 'Salary',
+  freelance: 'Freelance', gig: 'Freelance', invoice: 'Freelance', client: 'Freelance',
+  fuel: 'Transport', gas: 'Transport', bolt: 'Transport', uber: 'Transport', taxi: 'Transport',
+  transport: 'Transport', ride: 'Transport', bus: 'Transport', flight: 'Transport',
+  netflix: 'Entertainment', spotify: 'Entertainment', movie: 'Entertainment', cinema: 'Entertainment',
+  entertainment: 'Entertainment', games: 'Entertainment', concert: 'Entertainment',
+  rent: 'Bills & Utilities', electricity: 'Bills & Utilities', bill: 'Bills & Utilities', bills: 'Bills & Utilities',
+  internet: 'Bills & Utilities', utility: 'Bills & Utilities', utilities: 'Bills & Utilities', water: 'Bills & Utilities',
+  shopping: 'Shopping', clothes: 'Shopping', shoes: 'Shopping', amazon: 'Shopping', mall: 'Shopping',
+  health: 'Health', pharmacy: 'Health', doctor: 'Health', medicine: 'Health', hospital: 'Health', clinic: 'Health',
+}
+
+// Guess a category from free text. Checks whole-word matches against the
+// keyword map first, falls back to a sensible default based on kind.
+export function guessCategory(text, fallbackKind = 'expense') {
+  const words = text.toLowerCase().match(/[a-z]+/g) || []
+  for (const word of words) {
+    if (KEYWORD_MAP[word]) return KEYWORD_MAP[word]
+  }
+  return fallbackKind === 'income' ? 'Salary' : 'Shopping'
+}
+
 export function buildTransactions(region, monthLabel = 'Jun 2026') {
   const [monthName, year] = monthLabel.split(' ')
   const base = region.sample.income

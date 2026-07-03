@@ -52,6 +52,21 @@ export function useTransactionsStore(region, userId) {
     [region, userId]
   )
 
+  const addManyTransactions = useCallback(
+    (rows) => {
+      const withIds = rows.map((data, i) => ({
+        id: `txn-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 7)}`,
+        ...data,
+      }))
+      setTransactions((prev) => {
+        const next = sortByDateDesc([...withIds, ...prev])
+        localStorage.setItem(storageKey(region, userId), JSON.stringify(next))
+        return next
+      })
+    },
+    [region, userId]
+  )
+
   const updateTransaction = useCallback(
     (id, data) => {
       setTransactions((prev) => {
@@ -79,5 +94,5 @@ export function useTransactionsStore(region, userId) {
     persist(seeded)
   }, [region, persist])
 
-  return { transactions, addTransaction, updateTransaction, deleteTransaction, resetTransactions }
+  return { transactions, addTransaction, addManyTransactions, updateTransaction, deleteTransaction, resetTransactions }
 }

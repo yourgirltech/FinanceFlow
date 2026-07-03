@@ -16,6 +16,8 @@ const Transactions = lazy(() => import('./pages/Transactions'))
 const Budget = lazy(() => import('./pages/Budget'))
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Settings = lazy(() => import('./pages/Settings'))
+const QuickAdd = lazy(() => import('./pages/QuickAdd'))
+const ImportStatement = lazy(() => import('./pages/ImportStatement'))
 
 function PageFallback() {
   return (
@@ -39,7 +41,9 @@ function AppRoot() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/quick-add" element={<ProtectedRoute><QuickAdd /></ProtectedRoute>} />
             <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+            <Route path="/import" element={<ProtectedRoute><ImportStatement /></ProtectedRoute>} />
             <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

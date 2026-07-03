@@ -2,39 +2,49 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import Logo from '../landing/Logo'
 import { useTheme } from '../../lib/ThemeContext'
 import { useAuth } from '../../lib/AuthContext'
+import { getOnboardingState } from '../../lib/onboarding'
 
-const navItems = [
+const ALL_NAV_ITEMS = [
   {
     to: '/dashboard',
     label: 'Dashboard',
-    icon: (
-      <path d="M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z" strokeLinecap="round" strokeLinejoin="round" />
-    ),
+    tier: 'simple',
+    icon: <path d="M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z" strokeLinecap="round" strokeLinejoin="round" />,
+  },
+  {
+    to: '/quick-add',
+    label: 'Quick Add',
+    tier: 'simple',
+    icon: <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
     to: '/transactions',
     label: 'Transactions',
-    icon: (
-      <path d="M7 8h10M7 8l3-3M7 8l3 3M17 16H7M17 16l-3-3M17 16l-3 3" strokeLinecap="round" strokeLinejoin="round" />
-    ),
+    tier: 'simple',
+    icon: <path d="M7 8h10M7 8l3-3M7 8l3 3M17 16H7M17 16l-3-3M17 16l-3 3" strokeLinecap="round" strokeLinejoin="round" />,
+  },
+  {
+    to: '/import',
+    label: 'Import',
+    tier: 'simple',
+    icon: <path d="M12 15V3M12 3l-4 4M12 3l4 4M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
     to: '/budget',
     label: 'Budget',
-    icon: (
-      <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
-    ),
+    tier: 'planner',
+    icon: <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
     to: '/analytics',
     label: 'Analytics',
-    icon: (
-      <path d="M4 19V9M11 19V4M18 19v-7" strokeLinecap="round" strokeLinejoin="round" />
-    ),
+    tier: 'power',
+    icon: <path d="M4 19V9M11 19V4M18 19v-7" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
     to: '/settings',
     label: 'Settings',
+    tier: 'simple',
     icon: (
       <>
         <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -48,10 +58,18 @@ const navItems = [
   },
 ]
 
+// Simple sees the essentials; Planner adds Budget; Power (or anyone who
+// hasn't been through onboarding yet, for back-compat) sees everything.
+const TIER_RANK = { simple: 0, planner: 1, power: 2 }
+
 export default function Sidebar({ open, onClose }) {
   const { dark } = useTheme()
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   const navigate = useNavigate()
+
+  const involvement = getOnboardingState(user?.id).involvement || 'power'
+  const rank = TIER_RANK[involvement] ?? TIER_RANK.power
+  const navItems = ALL_NAV_ITEMS.filter((item) => TIER_RANK[item.tier] <= rank)
 
   async function handleLogout() {
     await signOut()
