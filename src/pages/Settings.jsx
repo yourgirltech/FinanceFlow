@@ -4,6 +4,7 @@ import Toggle from '../components/app/Toggle'
 import Button from '../components/ui/Button'
 import { useTheme } from '../lib/ThemeContext'
 import { useRegion } from '../lib/RegionContext'
+import { useAuth } from '../lib/AuthContext'
 
 function SectionCard({ title, description, children }) {
   return (
@@ -18,6 +19,7 @@ function SectionCard({ title, description, children }) {
 export default function Settings() {
   const { dark, toggle } = useTheme()
   const { region, setRegionCode, regions } = useRegion()
+  const { user } = useAuth()
 
   const [notifs, setNotifs] = useState({
     weeklySummary: true,
@@ -32,7 +34,7 @@ export default function Settings() {
         <SectionCard title="Profile" description="This information is shown across your dashboard.">
           <div className="flex items-center gap-4 mb-6">
             <div className="h-16 w-16 rounded-full bg-gold/90 flex items-center justify-center text-navy text-xl font-bold font-display">
-              F
+              {(user?.user_metadata?.full_name || user?.email || 'F').trim().charAt(0).toUpperCase()}
             </div>
             <Button variant="secondary" className="px-4 h-9 text-xs">
               Change photo
@@ -42,14 +44,16 @@ export default function Settings() {
             <div>
               <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Full name</label>
               <input
-                defaultValue="Funmi Adeyemi"
+                defaultValue={user?.user_metadata?.full_name || ''}
+                placeholder="Your name"
                 className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3.5 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors"
               />
             </div>
             <div>
               <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Email</label>
               <input
-                defaultValue="funmi@financeflow.app"
+                defaultValue={user?.email || ''}
+                placeholder="you@example.com"
                 className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3.5 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors"
               />
             </div>

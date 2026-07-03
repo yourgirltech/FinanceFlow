@@ -2,6 +2,8 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { ThemeProvider, useTheme } from './lib/ThemeContext'
 import { RegionProvider } from './lib/RegionContext'
+import { AuthProvider } from './lib/AuthContext'
+import ProtectedRoute from './components/app/ProtectedRoute'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -30,11 +32,11 @@ function AppRoot() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/budget" element={<Budget />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+            <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </div>
@@ -46,7 +48,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <RegionProvider>
-        <AppRoot />
+        <AuthProvider>
+          <AppRoot />
+        </AuthProvider>
       </RegionProvider>
     </ThemeProvider>
   )

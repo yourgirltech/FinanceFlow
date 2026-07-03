@@ -3,13 +3,15 @@ import TrendChart from '../components/dashboard/TrendChart'
 import IncomeExpenseBars from '../components/dashboard/IncomeExpenseBars'
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown'
 import { useRegion } from '../lib/RegionContext'
+import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
 import { buildMonthlyTrend, categoryBreakdownFromTransactions } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 
 export default function Analytics() {
   const { region } = useRegion()
-  const { transactions } = useTransactionsStore(region)
+  const { user } = useAuth()
+  const { transactions } = useTransactionsStore(region, user?.id)
   const trend = buildMonthlyTrend(region)
   const breakdown = categoryBreakdownFromTransactions(transactions)
 

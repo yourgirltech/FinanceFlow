@@ -3,13 +3,34 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthBrandPanel from '../components/auth/AuthBrandPanel'
 import Button from '../components/ui/Button'
 import Logo from '../components/landing/Logo'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { signIn, isSupabaseConfigured } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
+
+    if (!isSupabaseConfigured) {
+      setError('Supabase is not configured yet. Add your project credentials to .env to enable real login.')
+      return
+    }
+
+    setSubmitting(true)
+    const { error: signInError } = await signIn(email, password)
+    setSubmitting(false)
+
+    if (signInError) {
+      setError(signInError)
+      return
+    }
     navigate('/dashboard')
   }
 
@@ -39,6 +60,8 @@ export default function Login() {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
               />
@@ -52,6 +75,8 @@ export default function Login() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 pr-11 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
                 />
@@ -75,8 +100,12 @@ export default function Login() {
               </div>
             </div>
 
-            <Button type="submit" variant="navGold" className="w-full h-11 mt-2">
-              Log in
+            {error && (
+              <p className="text-xs text-red bg-red-soft dark:bg-red/10 rounded-lg px-3 py-2.5">{error}</p>
+            )}
+
+            <Button type="submit" variant="navGold" disabled={submitting} className="w-full h-11 mt-2 disabled:opacity-60">
+              {submitting ? 'Logging in…' : 'Log in'}
             </Button>
           </form>
 

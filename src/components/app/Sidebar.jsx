@@ -1,6 +1,7 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import Logo from '../landing/Logo'
 import { useTheme } from '../../lib/ThemeContext'
+import { useAuth } from '../../lib/AuthContext'
 
 const navItems = [
   {
@@ -49,6 +50,13 @@ const navItems = [
 
 export default function Sidebar({ open, onClose }) {
   const { dark } = useTheme()
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await signOut()
+    navigate('/')
+  }
 
   return (
     <>
@@ -90,15 +98,15 @@ export default function Sidebar({ open, onClose }) {
         </nav>
 
         <div className="p-3 border-t border-line dark:border-white/10">
-          <NavLink
-            to="/"
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate dark:text-white/60 hover:bg-surface dark:hover:bg-white/[0.06] hover:text-navy dark:hover:text-white transition-colors duration-200"
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate dark:text-white/60 hover:bg-surface dark:hover:bg-white/[0.06] hover:text-navy dark:hover:text-white transition-colors duration-200"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]">
               <path d="M15 3H5a2 2 0 00-2 2v14a2 2 0 002 2h10M10 17l5-5-5-5M15 12H3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Log out
-          </NavLink>
+          </button>
         </div>
       </aside>
     </>

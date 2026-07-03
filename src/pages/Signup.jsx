@@ -3,13 +3,45 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthBrandPanel from '../components/auth/AuthBrandPanel'
 import Button from '../components/ui/Button'
 import Logo from '../components/landing/Logo'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Signup() {
   const navigate = useNavigate()
+  const { signUp, isSupabaseConfigured } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [confirmMessage, setConfirmMessage] = useState('')
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
+    setConfirmMessage('')
+
+    if (!isSupabaseConfigured) {
+      setError('Supabase is not configured yet. Add your project credentials to .env to enable real signup.')
+      return
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.')
+      return
+    }
+
+    setSubmitting(true)
+    const { error: signUpError, needsEmailConfirmation } = await signUp(email, password, name)
+    setSubmitting(false)
+
+    if (signUpError) {
+      setError(signUpError)
+      return
+    }
+    if (needsEmailConfirmation) {
+      setConfirmMessage('Check your inbox to confirm your email, then log in.')
+      return
+    }
     navigate('/dashboard')
   }
 
@@ -33,57 +65,73 @@ export default function Signup() {
             Start tracking your money in minutes.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Full name</label>
-              <input
-                required
-                placeholder="Funmi Adeyemi"
-                className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
-              />
+          {confirmMessage ? (
+            <div className="rounded-xl bg-emerald-soft dark:bg-emerald/10 border border-emerald/20 px-4 py-4 text-sm text-navy dark:text-white">
+              {confirmMessage}
             </div>
-            <div>
-              <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Email</label>
-              <input
-                type="email"
-                required
-                placeholder="you@example.com"
-                className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Password</label>
-              <div className="relative">
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Full name</label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="At least 8 characters"
-                  className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 pr-11 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Funmi Adeyemi"
+                  className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-light dark:text-white/35 hover:text-navy dark:hover:text-white"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-                    {showPassword ? (
-                      <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.5 5.2A9.8 9.8 0 0112 5c5 0 9 4 10 7-.4 1.2-1.2 2.6-2.3 3.8M6.5 6.6C4.6 8 3.2 9.9 2 12c1 3 5 7 10 7 1.2 0 2.4-.2 3.5-.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    ) : (
-                      <>
-                        <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
-                      </>
-                    )}
-                  </svg>
-                </button>
               </div>
-            </div>
+              <div>
+                <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="At least 8 characters"
+                    className="w-full h-11 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-4 pr-11 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-light dark:text-white/35 hover:text-navy dark:hover:text-white"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                      {showPassword ? (
+                        <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.5 5.2A9.8 9.8 0 0112 5c5 0 9 4 10 7-.4 1.2-1.2 2.6-2.3 3.8M6.5 6.6C4.6 8 3.2 9.9 2 12c1 3 5 7 10 7 1.2 0 2.4-.2 3.5-.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      ) : (
+                        <>
+                          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+                          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+                        </>
+                      )}
+                    </svg>
+                  </button>
+                </div>
+              </div>
 
-            <Button type="submit" variant="navGold" ring className="w-full h-11 mt-2">
-              Create free account
-            </Button>
-          </form>
+              {error && (
+                <p className="text-xs text-red bg-red-soft dark:bg-red/10 rounded-lg px-3 py-2.5">{error}</p>
+              )}
+
+              <Button type="submit" variant="navGold" ring disabled={submitting} className="w-full h-11 mt-2 disabled:opacity-60">
+                {submitting ? 'Creating account…' : 'Create free account'}
+              </Button>
+            </form>
+          )}
 
           <p className="text-center text-sm text-slate dark:text-white/50 mt-8">
             Already have an account?{' '}

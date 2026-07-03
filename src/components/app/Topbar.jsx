@@ -1,7 +1,11 @@
 import ThemeToggle from '../landing/ThemeToggle'
 import RegionSwitcher from '../landing/RegionSwitcher'
+import { useAuth } from '../../lib/AuthContext'
 
 export default function Topbar({ title, subtitle, onMenuClick }) {
+  const { user } = useAuth()
+  const displayName = user?.user_metadata?.full_name || user?.email || 'F'
+  const initial = displayName.trim().charAt(0).toUpperCase() || 'F'
   return (
     <header className="sticky top-0 z-30 h-[72px] flex items-center justify-between px-5 lg:px-8 border-b border-line dark:border-white/10 bg-white/80 dark:bg-navy/80 backdrop-blur-md">
       <div className="flex items-center gap-3">
@@ -24,7 +28,7 @@ export default function Topbar({ title, subtitle, onMenuClick }) {
         <RegionSwitcher />
         <ThemeToggle />
         <div className="h-9 w-9 rounded-full bg-gold/90 flex items-center justify-center text-navy text-sm font-bold font-display ml-1">
-          F
+          {initial}
         </div>
       </div>
     </header>

@@ -5,6 +5,7 @@ import Button from '../components/ui/Button'
 import TransactionModal from '../components/app/TransactionModal'
 import ConfirmDeleteModal from '../components/app/ConfirmDeleteModal'
 import { useRegion } from '../lib/RegionContext'
+import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
 import { CATEGORIES } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
@@ -44,7 +45,8 @@ function RowActions({ onEdit, onDelete }) {
 
 export default function Transactions() {
   const { region } = useRegion()
-  const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactionsStore(region)
+  const { user } = useAuth()
+  const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactionsStore(region, user?.id)
 
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')

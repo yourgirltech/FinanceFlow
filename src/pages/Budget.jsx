@@ -1,5 +1,6 @@
 import AppShell from '../components/app/AppShell'
 import { useRegion } from '../lib/RegionContext'
+import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
 import { buildBudgetTargets } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
@@ -44,7 +45,8 @@ function BudgetCard({ budget, region }) {
 
 export default function Budget() {
   const { region } = useRegion()
-  const { transactions } = useTransactionsStore(region)
+  const { user } = useAuth()
+  const { transactions } = useTransactionsStore(region, user?.id)
   const targets = buildBudgetTargets(region)
 
   const budgets = targets.map((target) => {

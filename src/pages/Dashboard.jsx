@@ -4,6 +4,7 @@ import RecentTransactions from '../components/dashboard/RecentTransactions'
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown'
 import TrendChart from '../components/dashboard/TrendChart'
 import { useRegion } from '../lib/RegionContext'
+import { useAuth } from '../lib/AuthContext'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { buildMonthlyTrend, categoryBreakdownFromTransactions, totalsFromTransactions } from '../lib/mockData'
 
@@ -27,7 +28,10 @@ function Icon({ path }) {
 
 export default function Dashboard() {
   const { region } = useRegion()
-  const { transactions } = useTransactionsStore(region)
+  const { user } = useAuth()
+  const { transactions } = useTransactionsStore(region, user?.id)
+
+  const firstName = (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there').split(' ')[0]
 
   const { income, expenses } = totalsFromTransactions(transactions)
   const balance = region.sample.balance
@@ -38,7 +42,7 @@ export default function Dashboard() {
   const trend = buildMonthlyTrend(region)
 
   return (
-    <AppShell title={`Welcome back, Funmi 👋`} subtitle="Here's what's happening with your money this month.">
+    <AppShell title={`Welcome back, ${firstName} 👋`} subtitle="Here's what's happening with your money this month.">
       <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <div className="sm:col-span-2 lg:col-span-1">
           <StatCard label="Total Balance" value={balance} icon={<Icon path={icons.balance} />} />
