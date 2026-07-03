@@ -10,10 +10,13 @@ export default function Hero() {
       <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[900px] h-[500px] -z-10 bg-emerald/[0.06] blur-[120px] rounded-full" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
-        <div className="animate-fade-up">
-          <div className="inline-flex items-center gap-2 rounded-full border border-line dark:border-white/10 bg-white dark:bg-white/[0.04] px-3.5 py-1.5 mb-7">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-            <span className="text-xs font-medium text-slate dark:text-white/60">Now tracking accounts across every major {region.country} bank</span>
+        <div className="animate-fade-up min-w-0">
+          <div className="inline-flex items-center gap-2 rounded-full border border-line dark:border-white/10 bg-white dark:bg-white/[0.04] px-3.5 py-1.5 mb-7 max-w-full">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald shrink-0" />
+            <span className="text-xs font-medium text-slate dark:text-white/60 truncate">
+              <span className="sm:hidden">Trusted in {region.country}</span>
+              <span className="hidden sm:inline">Now tracking accounts across every major {region.country} bank</span>
+            </span>
           </div>
 
           <h1 className="font-display font-extrabold text-navy dark:text-white text-[40px] leading-[1.08] sm:text-[52px] lg:text-[58px] tracking-tight mb-6">
@@ -38,11 +41,11 @@ export default function Hero() {
             and the kind of insight that actually changes what you do next month.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 mb-8">
-            <Button to="/signup" variant="navGold" ring className="h-12 px-7 text-[15px]">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-8">
+            <Button to="/signup" variant="navGold" ring className="h-12 px-7 text-[15px] w-full sm:w-auto">
               Get Started Free
             </Button>
-            <Button href="#showcase" variant="secondary" className="h-12 px-7 text-[15px]">
+            <Button href="#showcase" variant="secondary" className="h-12 px-7 text-[15px] w-full sm:w-auto">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 -ml-1">
                 <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
                 <path d="M10 8.5l6 3.5-6 3.5v-7z" fill="currentColor" />
