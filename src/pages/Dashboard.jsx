@@ -1,15 +1,20 @@
+import { useState } from 'react'
 import AppShell from '../components/app/AppShell'
 import StatCard from '../components/app/StatCard'
 import MonthPicker from '../components/app/MonthPicker'
 import RecentTransactions from '../components/dashboard/RecentTransactions'
 import SpendingBreakdown from '../components/dashboard/SpendingBreakdown'
 import TrendChart from '../components/dashboard/TrendChart'
+import InsightsPanel from '../components/dashboard/InsightsPanel'
+import GoalModal from '../components/dashboard/GoalModal'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
 import { useSelectedMonth } from '../lib/useSelectedMonth'
+import { useSavingsGoal } from '../lib/useSavingsGoal'
 import { computeBudgetSummary } from '../lib/budgetSummary'
+import { generateInsights } from '../lib/insightsEngine'
 import { getOnboardingState } from '../lib/onboarding'
 import { formatMoney } from '../lib/format'
 import { categoryBreakdownFromTransactions, realMonthlyTrend, totalsFromTransactions } from '../lib/mockData'
@@ -36,7 +41,9 @@ export default function Dashboard() {
   const { user } = useAuth()
   const { transactions } = useTransactionsStore(region, user?.id)
   const { targets } = useBudgetTargetsStore(region, user?.id)
+  const { goal, setGoal, clearGoal } = useSavingsGoal(region, user?.id)
   const involvement = getOnboardingState(user?.id).involvement || 'power'
+  const [goalModalOpen, setGoalModalOpen] = useState(false)
 
   const firstName = (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there').split(' ')[0]
 
@@ -48,7 +55,7 @@ export default function Dashboard() {
   const balance = allTimeIncome - allTimeExpenses
   const netWorth = Math.round(balance * 4.4)
 
-  const { filtered, label, goPrev, goNext, canGoNext } = useSelectedMonth(transactions)
+  const { selected, filtered, label, goPrev, goNext, canGoNext } = useSelectedMonth(transactions)
   const { income, expenses } = totalsFromTransactions(filtered)
   const savingsRate = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0
   const breakdown = categoryBreakdownFromTransactions(filtered)
@@ -56,7 +63,29 @@ export default function Dashboard() {
 
   // Same helper Budget.jsx uses — Quick Add writes to the same transaction
   // store, so an expense entered there immediately moves this number too.
-  const { remaining: budgetRemaining } = computeBudgetSummary(targets, filtered)
+  const { remaining: budgetRemaining, byCategory } = computeBudgetSummary(targets, filtered)
+
+  // Real, computed insights — no external AI call, every number here comes
+  // straight from the user's own transactions and budget.
+  const insights = generateInsights({
+    transactions,
+    filtered,
+    monthKey: selected,
+    byCategory,
+    goal,
+    region,
+    formatMoney,
+  })
+
+  function handleSaveGoal(name, amount) {
+    setGoal(name, amount)
+    setGoalModalOpen(false)
+  }
+
+  function handleClearGoal() {
+    clearGoal()
+    setGoalModalOpen(false)
+  }
 
   return (
     <AppShell title={`Welcome back, ${firstName} 👋`} subtitle="Here's what's happening with your money.">
@@ -85,6 +114,9 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
+          <div className="mb-6">
+            <InsightsPanel insights={insights} goal={goal} onEditGoal={() => setGoalModalOpen(true)} maxCount={1} compact />
+          </div>
           <RecentTransactions transactions={transactions} />
         </>
       ) : involvement === 'planner' ? (
@@ -100,6 +132,9 @@ export default function Dashboard() {
               tone={budgetRemaining >= 0 ? 'up' : 'down'}
               icon={<Icon path={icons.budget} />}
             />
+          </div>
+          <div className="mb-5">
+            <InsightsPanel insights={insights} goal={goal} onEditGoal={() => setGoalModalOpen(true)} maxCount={2} />
           </div>
           <div className="mb-5">
             <TrendChart data={trend} />
@@ -123,6 +158,9 @@ export default function Dashboard() {
             />
             <StatCard label="Net Worth" value={netWorth} icon={<Icon path={icons.netWorth} />} />
           </div>
+          <div className="mb-5">
+            <InsightsPanel insights={insights} goal={goal} onEditGoal={() => setGoalModalOpen(true)} maxCount={3} />
+          </div>
           <div className="grid lg:grid-cols-3 gap-5 mb-5">
             <div className="lg:col-span-2">
               <TrendChart data={trend} />
@@ -132,6 +170,14 @@ export default function Dashboard() {
           <RecentTransactions transactions={transactions} />
         </>
       )}
+
+      <GoalModal
+        open={goalModalOpen}
+        onClose={() => setGoalModalOpen(false)}
+        onSubmit={handleSaveGoal}
+        onClear={handleClearGoal}
+        initial={goal}
+      />
     </AppShell>
   )
 }
