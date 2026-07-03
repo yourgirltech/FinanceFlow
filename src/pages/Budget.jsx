@@ -1,24 +1,37 @@
+import { useState } from 'react'
 import AppShell from '../components/app/AppShell'
+import BudgetTargetModal from '../components/app/BudgetTargetModal'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
-import { buildBudgetTargets } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
+import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
 
-function BudgetCard({ budget, region }) {
+function BudgetCard({ budget, region, onEdit }) {
   const pct = budget.total > 0 ? Math.round((budget.spent / budget.total) * 100) : 0
   const over = budget.spent > budget.total
   const barColor = over ? 'var(--color-red)' : budget.color
 
   return (
-    <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 p-5 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/5 transition-all duration-300">
+    <div className="group rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 p-5 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/5 transition-all duration-300">
       <div className="flex items-center justify-between mb-3">
         <span className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: budget.color }} />
           <span className="text-sm font-semibold text-navy dark:text-white">{budget.category}</span>
         </span>
-        <span className={`text-xs font-tabular font-semibold ${over ? 'text-red' : 'text-slate-light dark:text-white/40'}`}>
-          {pct}%
+        <span className="flex items-center gap-2">
+          <span className={`text-xs font-tabular font-semibold ${over ? 'text-red' : 'text-slate-light dark:text-white/40'}`}>
+            {pct}%
+          </span>
+          <button
+            onClick={onEdit}
+            aria-label={`Edit ${budget.category} budget`}
+            className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-light dark:text-white/40 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-surface dark:hover:bg-white/[0.08] hover:text-navy dark:hover:text-white transition-all"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
+              <path d="M11 4H4v16h16v-7M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 8.5-8.5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </span>
       </div>
 
@@ -31,7 +44,12 @@ function BudgetCard({ budget, region }) {
 
       <div className="flex items-center justify-between text-[12.5px]">
         <span className="font-tabular text-navy dark:text-white font-medium">{formatMoney(budget.spent, region)}</span>
-        <span className="text-slate-light dark:text-white/35">of {formatMoney(budget.total, region)}</span>
+        <button
+          onClick={onEdit}
+          className="text-slate-light dark:text-white/35 hover:text-gold hover:underline transition-colors"
+        >
+          of {formatMoney(budget.total, region)}
+        </button>
       </div>
 
       {over && (
@@ -47,7 +65,9 @@ export default function Budget() {
   const { region } = useRegion()
   const { user } = useAuth()
   const { transactions } = useTransactionsStore(region, user?.id)
-  const targets = buildBudgetTargets(region)
+  const { targets, updateTarget, resetTargets } = useBudgetTargetsStore(region, user?.id)
+
+  const [editingBudget, setEditingBudget] = useState(null)
 
   const budgets = targets.map((target) => {
     const spent = transactions
@@ -60,8 +80,13 @@ export default function Budget() {
   const totalSpent = budgets.reduce((s, b) => s + b.spent, 0)
   const overallPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
+  function handleSaveTarget(newTotal) {
+    updateTarget(editingBudget.category, newTotal)
+    setEditingBudget(null)
+  }
+
   return (
-    <AppShell title="Budget" subtitle="Monthly budgets by category">
+    <AppShell title="Budget" subtitle="Monthly budgets by category — hover a card to edit its limit">
       <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
         <div>
           <p className="text-white/50 text-xs mb-1">Total spent this month</p>
@@ -80,13 +105,26 @@ export default function Budget() {
             />
           </div>
         </div>
+        <button
+          onClick={resetTargets}
+          className="text-xs text-white/40 hover:text-white/70 transition-colors sm:ml-auto shrink-0"
+        >
+          Reset to defaults
+        </button>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {budgets.map((b) => (
-          <BudgetCard key={b.category} budget={b} region={region} />
+          <BudgetCard key={b.category} budget={b} region={region} onEdit={() => setEditingBudget(b)} />
         ))}
       </div>
+
+      <BudgetTargetModal
+        open={Boolean(editingBudget)}
+        onClose={() => setEditingBudget(null)}
+        onSubmit={handleSaveTarget}
+        budget={editingBudget}
+      />
     </AppShell>
   )
 }
