@@ -1,16 +1,50 @@
-# React + Vite
+# Finance Flow
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Take control of your money.**
 
-Currently, two official plugins are available:
+A personal finance platform with real Supabase authentication, a shared live data layer across every page, CSV/Excel statement import, and computed AI-style insights — no external AI API required.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+📄 Read the full [case study](./CASE_STUDY.md) for the design decisions, technical challenges, and what's next.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Landing page** — Stripe-style marketing site with dark mode and an 11-region currency switcher (Nigeria, US, UK, Kenya, Ghana, South Africa, Australia, Canada, Europe, Finland, Austria)
+- **Real authentication** — Supabase email/password, password reset, protected routes
+- **Onboarding** — personalizes the app to how "hands-on" a user wants to be (Simple / Planner / Power User), reshaping the Dashboard and navigation accordingly
+- **Transactions** — full CRUD, search, sort, category and month filtering
+- **Quick Add** — type `"Lunch 15"` and it parses category, amount, and kind automatically, with live budget feedback as you type
+- **Import Statement** — drag-and-drop CSV or Excel bank statements, auto-categorized, with a review step before import
+- **Budget** — user-set monthly limits per category, computed live from real transactions, not static mock data
+- **Analytics & Dashboard** — real month-over-month trends, category breakdowns, and a computed insights panel (spending trend alerts, budget pacing projections, savings goal timelines, recurring charge detection)
+- **Settings** — profile, appearance, region, notifications, and full data management (load sample data / clear everything)
 
-## Expanding the Oxlint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+React · Vite · Tailwind CSS v4 · React Router · Supabase (Auth) · Recharts · Papaparse · SheetJS · localStorage
+
+## Getting Started
+
+```bash
+npm install
+cp .env.example .env   # then fill in your Supabase project URL + anon key
+npm run dev
+```
+
+See `.env.example` for where to find your Supabase credentials.
+
+## Project Structure
+
+```
+src/
+├── pages/          — one file per route
+├── components/
+│   ├── landing/    — marketing site components
+│   ├── app/        — shared app shell (sidebar, topbar, modals)
+│   ├── dashboard/  — chart cards, insights panel
+│   ├── auth/       — login/signup branded panel
+│   ├── onboarding/ — onboarding wizard steps
+│   └── ui/         — base components (Button)
+└── lib/            — context providers, data stores, and business logic
+```
+
+Every data store (`useTransactionsStore`, `useBudgetTargetsStore`, `useSavingsGoal`) follows the same pattern: `localStorage`-backed, scoped per user + region, with a hook interface designed so the storage backend can be swapped for a real database without touching any page component.
