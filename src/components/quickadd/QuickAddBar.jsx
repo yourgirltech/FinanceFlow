@@ -1,11 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { parseQuickAdd } from '../../lib/quickAddParser'
 import { formatMoney } from '../../lib/format'
 
-export default function QuickAddBar({ region, onAdd }) {
+export default function QuickAddBar({ region, onAdd, prefill }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
   const [shake, setShake] = useState(false)
+
+  useEffect(() => {
+    if (prefill) setValue(prefill.text)
+  }, [prefill])
 
   const preview = value.trim() ? parseQuickAdd(value) : null
   const isValid = preview && !preview.error

@@ -15,31 +15,37 @@ export default function QuickAdd() {
   const { user } = useAuth()
   const { transactions, addTransaction } = useTransactionsStore(region, user?.id)
   const [sessionEntries, setSessionEntries] = useState([])
+  const [prefill, setPrefill] = useState(undefined)
 
   const { income, expenses } = totalsFromTransactions(transactions)
 
   function handleAdd(parsed) {
     addTransaction(parsed)
     setSessionEntries((prev) => [{ ...parsed, id: `${Date.now()}-${Math.random()}` }, ...prev])
+    setPrefill(undefined)
   }
 
   return (
     <AppShell title="Quick Add ⚡" subtitle="Log income and expenses in under 5 seconds.">
       <div className="max-w-2xl mx-auto">
         <QuickAddSummary income={income} expenses={expenses} region={region} />
-        <QuickAddBar region={region} onAdd={handleAdd} />
+        <QuickAddBar region={region} onAdd={handleAdd} prefill={prefill} />
 
-        <div className="flex flex-wrap gap-2 mt-4 mb-8">
-          <span className="text-xs text-slate-light dark:text-white/35 mr-1">Try:</span>
-          {EXAMPLES.map((ex) => (
-            <span
-              key={ex}
-              className="text-xs font-tabular text-slate dark:text-white/50 bg-surface dark:bg-white/[0.06] rounded-full px-2.5 py-1"
-            >
-              {ex}
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-4 mb-8 text-xs text-slate-light dark:text-white/35">
+          <span className="mr-0.5">Try:</span>
+          {EXAMPLES.map((ex, i) => (
+            <span key={ex} className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setPrefill({ text: ex, key: Date.now() })}
+                className="font-tabular text-slate dark:text-white/50 hover:text-gold transition-colors"
+              >
+                {ex}
+              </button>
+              {i < EXAMPLES.length - 1 && <span className="text-line dark:text-white/15">·</span>}
             </span>
           ))}
-        </div>
+        </p>
 
         <QuickAddFeed entries={sessionEntries} region={region} />
       </div>
