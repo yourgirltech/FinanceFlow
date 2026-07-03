@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppShell from '../components/app/AppShell'
 import Toggle from '../components/app/Toggle'
 import Button from '../components/ui/Button'
 import { useTheme } from '../lib/ThemeContext'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
+import { getOnboardingState } from '../lib/onboarding'
 
 function SectionCard({ title, description, children }) {
   return (
@@ -17,9 +19,19 @@ function SectionCard({ title, description, children }) {
 }
 
 export default function Settings() {
+  const navigate = useNavigate()
   const { dark, toggle } = useTheme()
   const { region, setRegionCode, regions } = useRegion()
   const { user } = useAuth()
+  const onboarding = getOnboardingState(user?.id)
+
+  const involvementLabels = { simple: '🌱 Simple', planner: '📊 Planner', power: '🚀 Power User' }
+  const trackingLabels = {
+    'quick-add': '⚡ Quick Add',
+    manual: '✍️ Manual Tracking',
+    import: '📄 Import Statement',
+    bank: '🏦 Bank Connection',
+  }
 
   const [notifs, setNotifs] = useState({
     weeklySummary: true,
@@ -60,6 +72,28 @@ export default function Settings() {
           </div>
           <div className="mt-5">
             <Button variant="navGold" className="px-5 h-10 text-sm">Save changes</Button>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="How you track money" description="Set during onboarding — change it anytime.">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-6">
+              <div>
+                <p className="text-[11px] text-slate-light dark:text-white/35 mb-0.5">Involvement level</p>
+                <p className="text-sm text-navy dark:text-white font-medium">
+                  {onboarding.involvement ? involvementLabels[onboarding.involvement] : 'Not set'}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-slate-light dark:text-white/35 mb-0.5">Tracking style</p>
+                <p className="text-sm text-navy dark:text-white font-medium">
+                  {onboarding.trackingStyle ? trackingLabels[onboarding.trackingStyle] : 'Not set'}
+                </p>
+              </div>
+            </div>
+            <Button variant="secondary" onClick={() => navigate('/onboarding')} className="h-9 px-4 text-xs">
+              Retake setup
+            </Button>
           </div>
         </SectionCard>
 

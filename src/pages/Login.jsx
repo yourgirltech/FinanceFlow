@@ -4,6 +4,7 @@ import AuthBrandPanel from '../components/auth/AuthBrandPanel'
 import Button from '../components/ui/Button'
 import Logo from '../components/landing/Logo'
 import { useAuth } from '../lib/AuthContext'
+import { getOnboardingState } from '../lib/onboarding'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -24,14 +25,15 @@ export default function Login() {
     }
 
     setSubmitting(true)
-    const { error: signInError } = await signIn(email, password)
+    const { error: signInError, user } = await signIn(email, password)
     setSubmitting(false)
 
     if (signInError) {
       setError(signInError)
       return
     }
-    navigate('/dashboard')
+    const onboarding = getOnboardingState(user?.id)
+    navigate(onboarding.complete ? '/dashboard' : '/onboarding')
   }
 
   return (

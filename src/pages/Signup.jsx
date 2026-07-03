@@ -42,7 +42,7 @@ export default function Signup() {
       setConfirmMessage('Check your inbox to confirm your email, then log in.')
       return
     }
-    navigate('/dashboard')
+    navigate('/onboarding')
   }
 
   return (
