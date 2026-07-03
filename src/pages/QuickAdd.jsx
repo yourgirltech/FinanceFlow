@@ -25,6 +25,10 @@ export default function QuickAdd() {
     setPrefill(undefined)
   }
 
+  function clearFeed() {
+    setSessionEntries([])
+  }
+
   return (
     <AppShell title="Quick Add ⚡" subtitle="Log income and expenses in under 5 seconds.">
       <div className="max-w-2xl mx-auto">
@@ -47,7 +51,7 @@ export default function QuickAdd() {
           ))}
         </p>
 
-        <QuickAddFeed entries={sessionEntries} region={region} />
+        <QuickAddFeed entries={sessionEntries} region={region} onClear={clearFeed} />
       </div>
     </AppShell>
   )
