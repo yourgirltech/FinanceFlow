@@ -26,7 +26,7 @@ export default function UploadArea({ onFile, loading }) {
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,text/csv"
+        accept=".csv,text/csv,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
         className="hidden"
         onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
       />
@@ -47,7 +47,7 @@ export default function UploadArea({ onFile, loading }) {
             Drop your statement here, or click to browse
           </p>
           <p className="text-xs text-slate-light dark:text-white/35">
-            CSV files exported from your bank — Excel support coming soon
+            CSV or Excel (.xlsx, .xls) files exported from your bank
           </p>
         </>
       )}

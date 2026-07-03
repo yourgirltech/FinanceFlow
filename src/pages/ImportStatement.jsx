@@ -7,7 +7,7 @@ import Button from '../components/ui/Button'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
-import { parseStatementCSV } from '../lib/importStatement'
+import { parseStatementFile } from '../lib/importStatement'
 import { categoryKind, categoryColor } from '../lib/mockData'
 
 export default function ImportStatement() {
@@ -25,7 +25,7 @@ export default function ImportStatement() {
     setLoading(true)
     setFileError('')
     try {
-      const { rows: parsed, warning: w } = await parseStatementCSV(file)
+      const { rows: parsed, warning: w } = await parseStatementFile(file)
       if (parsed.length === 0) {
         setFileError("Couldn't find any usable rows in that file. Check it has date, description, and amount columns.")
         setLoading(false)
@@ -34,7 +34,7 @@ export default function ImportStatement() {
       setRows(parsed)
       setWarning(w || '')
     } catch (err) {
-      setFileError('Something went wrong reading that file. Make sure it\'s a valid CSV.')
+      setFileError('Something went wrong reading that file. Make sure it\'s a valid CSV or Excel file.')
     }
     setLoading(false)
   }
@@ -71,7 +71,7 @@ export default function ImportStatement() {
   }
 
   return (
-    <AppShell title="Import Statement 📄" subtitle="Bring in transactions from your bank's exported CSV.">
+    <AppShell title="Import Statement 📄" subtitle="Bring in transactions from your bank's exported CSV or Excel file.">
       <div className="max-w-2xl mx-auto">
         {summary ? (
           <div className="text-center py-10 animate-fade-up">
