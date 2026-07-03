@@ -35,7 +35,7 @@ export default function Dashboard() {
   const firstName = (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there').split(' ')[0]
 
   const { income, expenses } = totalsFromTransactions(transactions)
-  const balance = region.sample.balance
+  const balance = income - expenses
   const savingsRate = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0
   const netWorth = Math.round(balance * 4.4)
 

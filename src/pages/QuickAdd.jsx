@@ -2,17 +2,21 @@ import { useState } from 'react'
 import AppShell from '../components/app/AppShell'
 import QuickAddBar from '../components/quickadd/QuickAddBar'
 import QuickAddFeed from '../components/quickadd/QuickAddFeed'
+import QuickAddSummary from '../components/quickadd/QuickAddSummary'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
+import { totalsFromTransactions } from '../lib/mockData'
 
 const EXAMPLES = ['Lunch 15', 'Salary 2500', 'Netflix 18', 'Bolt 20', 'Fuel 80']
 
 export default function QuickAdd() {
   const { region } = useRegion()
   const { user } = useAuth()
-  const { addTransaction } = useTransactionsStore(region, user?.id)
+  const { transactions, addTransaction } = useTransactionsStore(region, user?.id)
   const [sessionEntries, setSessionEntries] = useState([])
+
+  const { income, expenses } = totalsFromTransactions(transactions)
 
   function handleAdd(parsed) {
     addTransaction(parsed)
@@ -22,6 +26,7 @@ export default function QuickAdd() {
   return (
     <AppShell title="Quick Add ⚡" subtitle="Log income and expenses in under 5 seconds.">
       <div className="max-w-2xl mx-auto">
+        <QuickAddSummary income={income} expenses={expenses} region={region} />
         <QuickAddBar region={region} onAdd={handleAdd} />
 
         <div className="flex flex-wrap gap-2 mt-4 mb-8">
