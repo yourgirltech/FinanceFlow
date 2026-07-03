@@ -86,40 +86,62 @@ export default function Budget() {
         <MonthPicker label={label} onPrev={goPrev} onNext={goNext} canGoNext={canGoNext} />
       </div>
 
-      <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
-        <div>
-          <p className="text-white/50 text-xs mb-1">Total spent in {label}</p>
-          <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalSpent, region)}</p>
-          <p className="text-white/40 text-xs mt-1">of {formatMoney(totalBudget, region)} budgeted</p>
-        </div>
-        <div>
-          <p className="text-white/50 text-xs mb-1">{remaining >= 0 ? 'Remaining' : 'Over budget'}</p>
-          <p className={`font-tabular text-2xl font-semibold ${remaining >= 0 ? 'text-emerald' : 'text-red'}`}>
-            {formatMoney(Math.abs(remaining), region)}
-          </p>
-          <p className="text-white/40 text-xs mt-1">{remaining >= 0 ? 'left to spend' : 'over your budget'}</p>
-        </div>
-        <div className="flex-1 max-w-sm">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-white/50 text-xs">Overall usage</span>
-            <span className={`font-tabular text-xs ${overallPct > 100 ? 'text-red' : 'text-white/80'}`}>{overallPct}%</span>
+      {totalBudget === 0 ? (
+        <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-5">
+          <div className="h-11 w-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+              <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" stroke="var(--color-gold)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${
-                overallPct > 100 ? 'bg-red' : 'bg-gradient-to-r from-emerald to-gold'
-              }`}
-              style={{ width: `${Math.min(overallPct, 100)}%` }}
-            />
+          <div className="flex-1">
+            <p className="text-white text-sm font-medium mb-1">No budgets set yet</p>
+            <p className="text-white/50 text-xs leading-relaxed">
+              Every category below is at ₦0 — click one to set a monthly limit, or start from suggested amounts.
+            </p>
           </div>
+          <button
+            onClick={resetTargets}
+            className="text-xs font-medium text-gold hover:underline shrink-0 whitespace-nowrap"
+          >
+            Use suggested budgets
+          </button>
         </div>
-        <button
-          onClick={resetTargets}
-          className="text-xs text-white/40 hover:text-white/70 transition-colors sm:ml-auto shrink-0"
-        >
-          Use suggested budgets
-        </button>
-      </div>
+      ) : (
+        <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
+          <div>
+            <p className="text-white/50 text-xs mb-1">Total spent in {label}</p>
+            <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalSpent, region)}</p>
+            <p className="text-white/40 text-xs mt-1">of {formatMoney(totalBudget, region)} budgeted</p>
+          </div>
+          <div>
+            <p className="text-white/50 text-xs mb-1">{remaining >= 0 ? 'Remaining' : 'Over budget'}</p>
+            <p className={`font-tabular text-2xl font-semibold ${remaining >= 0 ? 'text-emerald' : 'text-red'}`}>
+              {formatMoney(Math.abs(remaining), region)}
+            </p>
+            <p className="text-white/40 text-xs mt-1">{remaining >= 0 ? 'left to spend' : 'over your budget'}</p>
+          </div>
+          <div className="flex-1 max-w-sm">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-white/50 text-xs">Overall usage</span>
+              <span className={`font-tabular text-xs ${overallPct > 100 ? 'text-red' : 'text-white/80'}`}>{overallPct}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ${
+                  overallPct > 100 ? 'bg-red' : 'bg-gradient-to-r from-emerald to-gold'
+                }`}
+                style={{ width: `${Math.min(overallPct, 100)}%` }}
+              />
+            </div>
+          </div>
+          <button
+            onClick={resetTargets}
+            className="text-xs text-white/40 hover:text-white/70 transition-colors sm:ml-auto shrink-0"
+          >
+            Use suggested budgets
+          </button>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {budgets.map((b) => (
