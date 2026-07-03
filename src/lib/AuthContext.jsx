@@ -69,9 +69,21 @@ export function AuthProvider({ children }) {
     return { success: true }
   }
 
+  async function updateProfile({ email, fullName }) {
+    if (!isSupabaseConfigured) return { error: 'Supabase is not configured yet.' }
+    const payload = { data: { full_name: fullName } }
+    const emailChanged = Boolean(email) && email !== user?.email
+    if (emailChanged) payload.email = email
+
+    const { data, error } = await supabase.auth.updateUser(payload)
+    if (error) return { error: error.message }
+    setUser(data.user)
+    return { user: data.user, emailChangePending: emailChanged }
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signUp, signOut, resetPasswordForEmail, updatePassword, isSupabaseConfigured }}
+      value={{ user, loading, signIn, signUp, signOut, resetPasswordForEmail, updatePassword, updateProfile, isSupabaseConfigured }}
     >
       {children}
     </AuthContext.Provider>

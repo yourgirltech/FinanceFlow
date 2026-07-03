@@ -4,6 +4,7 @@ import { ThemeProvider, useTheme } from './lib/ThemeContext'
 import { RegionProvider } from './lib/RegionContext'
 import { AuthProvider } from './lib/AuthContext'
 import ProtectedRoute from './components/app/ProtectedRoute'
+import TierGate from './components/app/TierGate'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -44,8 +45,8 @@ function AppRoot() {
             <Route path="/quick-add" element={<ProtectedRoute><QuickAdd /></ProtectedRoute>} />
             <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
             <Route path="/import" element={<ProtectedRoute><ImportStatement /></ProtectedRoute>} />
-            <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
-            <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+            <Route path="/budget" element={<ProtectedRoute><TierGate requiredTier="planner"><Budget /></TierGate></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><TierGate requiredTier="power"><Analytics /></TierGate></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Routes>
         </Suspense>

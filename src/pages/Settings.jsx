@@ -8,6 +8,7 @@ import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { getOnboardingState } from '../lib/onboarding'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
+import { useNotificationPrefs } from '../lib/useNotificationPrefs'
 import ConfirmDeleteModal from '../components/app/ConfirmDeleteModal'
 
 function SectionCard({ title, description, children }) {
@@ -24,10 +25,16 @@ export default function Settings() {
   const navigate = useNavigate()
   const { dark, toggle } = useTheme()
   const { region, setRegionCode, regions } = useRegion()
-  const { user } = useAuth()
+  const { user, updateProfile, isSupabaseConfigured } = useAuth()
   const onboarding = getOnboardingState(user?.id)
   const { transactions, loadSampleData, clearAllTransactions } = useTransactionsStore(region, user?.id)
+  const { prefs, setPref } = useNotificationPrefs(user?.id)
   const [confirmClear, setConfirmClear] = useState(false)
+
+  const [name, setName] = useState(user?.user_metadata?.full_name || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [profileSaving, setProfileSaving] = useState(false)
+  const [profileMessage, setProfileMessage] = useState(null) // { type: 'success' | 'error' | 'pending', text }
 
   const involvementLabels = { simple: '🌱 Simple', planner: '📊 Planner', power: '🚀 Power User' }
   const trackingLabels = {
@@ -37,12 +44,30 @@ export default function Settings() {
     bank: '🏦 Bank Connection',
   }
 
-  const [notifs, setNotifs] = useState({
-    weeklySummary: true,
-    budgetAlerts: true,
-    largeTransactions: true,
-    productUpdates: false,
-  })
+  async function handleSaveProfile() {
+    setProfileMessage(null)
+    if (!isSupabaseConfigured) {
+      setProfileMessage({ type: 'error', text: 'Supabase is not configured yet.' })
+      return
+    }
+    if (!name.trim()) {
+      setProfileMessage({ type: 'error', text: 'Name cannot be empty.' })
+      return
+    }
+    setProfileSaving(true)
+    const { error, emailChangePending } = await updateProfile({ email: email.trim(), fullName: name.trim() })
+    setProfileSaving(false)
+
+    if (error) {
+      setProfileMessage({ type: 'error', text: error })
+      return
+    }
+    setProfileMessage(
+      emailChangePending
+        ? { type: 'pending', text: 'Saved. Check your new email inbox to confirm the change.' }
+        : { type: 'success', text: 'Profile updated.' }
+    )
+  }
 
   return (
     <AppShell title="Settings" subtitle="Manage your profile, appearance, and notifications">
@@ -50,7 +75,7 @@ export default function Settings() {
         <SectionCard title="Profile" description="This information is shown across your dashboard.">
           <div className="flex items-center gap-4 mb-6">
             <div className="h-16 w-16 rounded-full bg-gold/90 flex items-center justify-center text-navy text-xl font-bold font-display">
-              {(user?.user_metadata?.full_name || user?.email || 'F').trim().charAt(0).toUpperCase()}
+              {(name || email || 'F').trim().charAt(0).toUpperCase()}
             </div>
             <Button variant="secondary" className="px-4 h-9 text-xs">
               Change photo
@@ -60,7 +85,8 @@ export default function Settings() {
             <div>
               <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Full name</label>
               <input
-                defaultValue={user?.user_metadata?.full_name || ''}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3.5 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors"
               />
@@ -68,14 +94,30 @@ export default function Settings() {
             <div>
               <label className="text-xs font-medium text-slate dark:text-white/50 mb-1.5 block">Email</label>
               <input
-                defaultValue={user?.email || ''}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3.5 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors"
               />
             </div>
           </div>
+          {profileMessage && (
+            <p
+              className={`text-xs mt-3 rounded-lg px-3 py-2.5 ${
+                profileMessage.type === 'error'
+                  ? 'text-red bg-red-soft dark:bg-red/10'
+                  : profileMessage.type === 'pending'
+                  ? 'text-gold bg-gold-soft dark:bg-gold/10'
+                  : 'text-emerald bg-emerald-soft dark:bg-emerald/10'
+              }`}
+            >
+              {profileMessage.text}
+            </p>
+          )}
           <div className="mt-5">
-            <Button variant="navGold" className="px-5 h-10 text-sm">Save changes</Button>
+            <Button variant="navGold" onClick={handleSaveProfile} disabled={profileSaving} className="px-5 h-10 text-sm disabled:opacity-60">
+              {profileSaving ? 'Saving…' : 'Save changes'}
+            </Button>
           </div>
         </SectionCard>
 
@@ -147,26 +189,26 @@ export default function Settings() {
           <Toggle
             label="Weekly summary"
             description="A recap of income, spending, and savings every Monday."
-            checked={notifs.weeklySummary}
-            onChange={(v) => setNotifs((n) => ({ ...n, weeklySummary: v }))}
+            checked={prefs.weeklySummary}
+            onChange={(v) => setPref('weeklySummary', v)}
           />
           <Toggle
             label="Budget alerts"
             description="Get notified when a category is close to its limit."
-            checked={notifs.budgetAlerts}
-            onChange={(v) => setNotifs((n) => ({ ...n, budgetAlerts: v }))}
+            checked={prefs.budgetAlerts}
+            onChange={(v) => setPref('budgetAlerts', v)}
           />
           <Toggle
             label="Large transactions"
             description="Alerts for any transaction above a threshold you set."
-            checked={notifs.largeTransactions}
-            onChange={(v) => setNotifs((n) => ({ ...n, largeTransactions: v }))}
+            checked={prefs.largeTransactions}
+            onChange={(v) => setPref('largeTransactions', v)}
           />
           <Toggle
             label="Product updates"
             description="Occasional news about new Finance Flow features."
-            checked={notifs.productUpdates}
-            onChange={(v) => setNotifs((n) => ({ ...n, productUpdates: v }))}
+            checked={prefs.productUpdates}
+            onChange={(v) => setPref('productUpdates', v)}
           />
         </SectionCard>
 

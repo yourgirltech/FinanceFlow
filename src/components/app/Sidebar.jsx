@@ -3,6 +3,7 @@ import Logo from '../landing/Logo'
 import { useTheme } from '../../lib/ThemeContext'
 import { useAuth } from '../../lib/AuthContext'
 import { getOnboardingState } from '../../lib/onboarding'
+import { TIER_RANK } from '../../lib/involvement'
 
 const ALL_NAV_ITEMS = [
   {
@@ -60,7 +61,6 @@ const ALL_NAV_ITEMS = [
 
 // Simple sees the essentials; Planner adds Budget; Power (or anyone who
 // hasn't been through onboarding yet, for back-compat) sees everything.
-const TIER_RANK = { simple: 0, planner: 1, power: 2 }
 
 export default function Sidebar({ open, onClose }) {
   const { dark } = useTheme()
