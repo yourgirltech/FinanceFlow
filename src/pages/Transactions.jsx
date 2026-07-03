@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 import AppShell from '../components/app/AppShell'
 import CategoryFilter from '../components/app/CategoryFilter'
+import MonthFilter from '../components/app/MonthFilter'
 import Button from '../components/ui/Button'
 import TransactionModal from '../components/app/TransactionModal'
 import ConfirmDeleteModal from '../components/app/ConfirmDeleteModal'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
-import { CATEGORIES } from '../lib/mockData'
+import { CATEGORIES, getAvailableMonths } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 
 function SortIcon({ direction }) {
@@ -50,8 +51,11 @@ export default function Transactions() {
 
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
+  const [month, setMonth] = useState('all')
   const [sortKey, setSortKey] = useState('date')
   const [sortDir, setSortDir] = useState('desc')
+
+  const availableMonths = useMemo(() => getAvailableMonths(transactions), [transactions])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editingTxn, setEditingTxn] = useState(null)
@@ -60,6 +64,7 @@ export default function Transactions() {
   const filtered = useMemo(() => {
     let rows = transactions
     if (category !== 'all') rows = rows.filter((t) => t.category === category)
+    if (month !== 'all') rows = rows.filter((t) => t.fullDate.slice(0, 7) === month)
     if (query.trim()) {
       const q = query.trim().toLowerCase()
       rows = rows.filter(
@@ -125,6 +130,7 @@ export default function Transactions() {
           />
         </div>
         <CategoryFilter categories={CATEGORIES} value={category} onChange={setCategory} />
+        <MonthFilter months={availableMonths} value={month} onChange={setMonth} />
         <Button variant="navGold" onClick={openAdd} className="h-10 px-4 sm:ml-auto">
           <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 -ml-1">
             <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

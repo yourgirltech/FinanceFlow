@@ -102,16 +102,41 @@ export function buildBudgetTargets(region) {
   }))
 }
 
-export function buildMonthlyTrend(region) {
-  const base = region.sample
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-  const incomeVariance = [0.9, 0.95, 1.0, 0.92, 1.05, 1.0]
-  const expenseVariance = [0.82, 0.88, 0.95, 1.02, 0.9, 1.0]
-  return months.map((m, i) => ({
-    month: m,
-    income: Math.round(base.income * incomeVariance[i]),
-    expenses: Math.round(base.expenses * expenseVariance[i]),
-  }))
+// Real income-vs-expenses history, built from actual transactions (including
+// anything brought in via CSV import) rather than fabricated variance curves.
+// Pads backward to `monthsCount` consecutive months ending at whichever month
+// has the most recent activity, so months with no data honestly show zero
+// instead of a fake number.
+export function realMonthlyTrend(transactions, monthsCount = 6) {
+  const grouped = {}
+  transactions.forEach((t) => {
+    const key = t.fullDate.slice(0, 7)
+    if (!grouped[key]) grouped[key] = { income: 0, expenses: 0 }
+    if (t.kind === 'income') grouped[key].income += t.amount
+    else grouped[key].expenses += t.amount
+  })
+
+  const latestKey =
+    transactions.length === 0
+      ? (() => {
+          const d = new Date()
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        })()
+      : transactions.reduce((max, t) => (t.fullDate.slice(0, 7) > max ? t.fullDate.slice(0, 7) : max), transactions[0].fullDate.slice(0, 7))
+
+  const result = []
+  for (let i = monthsCount - 1; i >= 0; i--) {
+    const [y, m] = latestKey.split('-').map(Number)
+    const d = new Date(y, m - 1 - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const g = grouped[key] || { income: 0, expenses: 0 }
+    result.push({
+      month: d.toLocaleDateString('en-US', { month: 'short' }),
+      income: g.income,
+      expenses: g.expenses,
+    })
+  }
+  return result
 }
 
 // Live derivations — operate on whatever transaction list is passed in
@@ -126,6 +151,23 @@ export function categoryBreakdownFromTransactions(transactions) {
   return Object.entries(totals)
     .map(([category, value]) => ({ category, value, color: categoryColor(category) }))
     .sort((a, b) => b.value - a.value)
+}
+
+
+// Month-scoping helpers — used so "this month" labels actually mean what
+// they say, even after importing a CSV spanning many months of history.
+export function getAvailableMonths(transactions) {
+  const set = new Set(transactions.map((t) => t.fullDate.slice(0, 7)))
+  return Array.from(set).sort().reverse() // 'YYYY-MM', most recent first
+}
+
+export function monthLabelFromYm(ym) {
+  const [y, m] = ym.split('-').map(Number)
+  return new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+export function filterTransactionsByMonth(transactions, ym) {
+  return transactions.filter((t) => t.fullDate.slice(0, 7) === ym)
 }
 
 export function totalsFromTransactions(transactions) {

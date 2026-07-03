@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import AppShell from '../components/app/AppShell'
+import MonthPicker from '../components/app/MonthPicker'
 import BudgetTargetModal from '../components/app/BudgetTargetModal'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
+import { useSelectedMonth } from '../lib/useSelectedMonth'
 
 function BudgetCard({ budget, region, onEdit }) {
   const pct = budget.total > 0 ? Math.round((budget.spent / budget.total) * 100) : 0
@@ -66,11 +68,12 @@ export default function Budget() {
   const { user } = useAuth()
   const { transactions } = useTransactionsStore(region, user?.id)
   const { targets, updateTarget, resetTargets } = useBudgetTargetsStore(region, user?.id)
+  const { filtered, label, goPrev, goNext, canGoNext } = useSelectedMonth(transactions)
 
   const [editingBudget, setEditingBudget] = useState(null)
 
   const budgets = targets.map((target) => {
-    const spent = transactions
+    const spent = filtered
       .filter((t) => t.kind === 'expense' && t.category === target.category)
       .reduce((sum, t) => sum + t.amount, 0)
     return { ...target, spent }
@@ -87,9 +90,13 @@ export default function Budget() {
 
   return (
     <AppShell title="Budget" subtitle="Monthly budgets by category — hover a card to edit its limit">
+      <div className="flex items-center justify-end mb-5">
+        <MonthPicker label={label} onPrev={goPrev} onNext={goNext} canGoNext={canGoNext} />
+      </div>
+
       <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
         <div>
-          <p className="text-white/50 text-xs mb-1">Total spent this month</p>
+          <p className="text-white/50 text-xs mb-1">Total spent in {label}</p>
           <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalSpent, region)}</p>
           <p className="text-white/40 text-xs mt-1">of {formatMoney(totalBudget, region)} budgeted</p>
         </div>
