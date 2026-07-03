@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { parseQuickAdd } from '../../lib/quickAddParser'
 import { formatMoney } from '../../lib/format'
 
-export default function QuickAddBar({ region, onAdd, prefill }) {
+export default function QuickAddBar({ region, onAdd, prefill, budgetByCategory = [] }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
   const [shake, setShake] = useState(false)
@@ -13,6 +13,12 @@ export default function QuickAddBar({ region, onAdd, prefill }) {
 
   const preview = value.trim() ? parseQuickAdd(value) : null
   const isValid = preview && !preview.error
+
+  const matchedBudget =
+    isValid && preview.kind === 'expense'
+      ? budgetByCategory.find((b) => b.category === preview.category)
+      : null
+  const remainingAfter = matchedBudget ? matchedBudget.remaining - preview.amount : null
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -63,6 +69,13 @@ export default function QuickAddBar({ region, onAdd, prefill }) {
         </button>
       </div>
       {error && <p className="text-xs text-red mt-2 px-1">{error}</p>}
+      {!error && matchedBudget && (
+        <p className={`text-xs mt-2 px-1 ${remainingAfter >= 0 ? 'text-slate-light dark:text-white/35' : 'text-red'}`}>
+          {remainingAfter >= 0
+            ? `${formatMoney(remainingAfter, region)} left in ${preview.category} after this`
+            : `This puts you ${formatMoney(Math.abs(remainingAfter), region)} over budget in ${preview.category}`}
+        </p>
+      )}
     </form>
   )
 }

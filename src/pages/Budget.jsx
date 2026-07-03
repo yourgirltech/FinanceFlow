@@ -8,6 +8,7 @@ import { formatMoney } from '../lib/format'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
 import { useSelectedMonth } from '../lib/useSelectedMonth'
+import { computeBudgetSummary } from '../lib/budgetSummary'
 
 function BudgetCard({ budget, region, onEdit }) {
   const pct = budget.total > 0 ? Math.round((budget.spent / budget.total) * 100) : 0
@@ -72,16 +73,7 @@ export default function Budget() {
 
   const [editingBudget, setEditingBudget] = useState(null)
 
-  const budgets = targets.map((target) => {
-    const spent = filtered
-      .filter((t) => t.kind === 'expense' && t.category === target.category)
-      .reduce((sum, t) => sum + t.amount, 0)
-    return { ...target, spent }
-  })
-
-  const totalBudget = budgets.reduce((s, b) => s + b.total, 0)
-  const totalSpent = budgets.reduce((s, b) => s + b.spent, 0)
-  const overallPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
+  const { byCategory: budgets, totalBudget, totalSpent, remaining, overallPct } = computeBudgetSummary(targets, filtered)
 
   function handleSaveTarget(newTotal) {
     updateTarget(editingBudget.category, newTotal)
@@ -99,6 +91,13 @@ export default function Budget() {
           <p className="text-white/50 text-xs mb-1">Total spent in {label}</p>
           <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalSpent, region)}</p>
           <p className="text-white/40 text-xs mt-1">of {formatMoney(totalBudget, region)} budgeted</p>
+        </div>
+        <div>
+          <p className="text-white/50 text-xs mb-1">{remaining >= 0 ? 'Remaining' : 'Over budget'}</p>
+          <p className={`font-tabular text-2xl font-semibold ${remaining >= 0 ? 'text-emerald' : 'text-red'}`}>
+            {formatMoney(Math.abs(remaining), region)}
+          </p>
+          <p className="text-white/40 text-xs mt-1">{remaining >= 0 ? 'left to spend' : 'over your budget'}</p>
         </div>
         <div className="flex-1 max-w-sm">
           <div className="flex items-center justify-between mb-1.5">
