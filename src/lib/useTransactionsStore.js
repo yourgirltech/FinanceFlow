@@ -5,17 +5,19 @@ function storageKey(region, userId) {
   return `finance-flow-transactions-${userId || 'guest'}-${region.code}`
 }
 
-function loadOrSeed(region, userId) {
+// New accounts (or a first-time switch to a new currency) start completely
+// empty — a real user's dashboard should read ₦0 until they've actually
+// logged something, not be pre-populated with fake demo data.
+function loadOrInit(region, userId) {
   const key = storageKey(region, userId)
   try {
     const raw = localStorage.getItem(key)
     if (raw) return JSON.parse(raw)
   } catch {
-    // fall through to reseed on corrupt data
+    // fall through to empty on corrupt data
   }
-  const seeded = buildTransactions(region)
-  localStorage.setItem(key, JSON.stringify(seeded))
-  return seeded
+  localStorage.setItem(key, JSON.stringify([]))
+  return []
 }
 
 function sortByDateDesc(list) {
@@ -26,10 +28,10 @@ function sortByDateDesc(list) {
 // user + region so different accounts (or currencies) never mix datasets.
 // Transactions, Dashboard, Budget, and Analytics all read from this same hook.
 export function useTransactionsStore(region, userId) {
-  const [transactions, setTransactions] = useState(() => loadOrSeed(region, userId))
+  const [transactions, setTransactions] = useState(() => loadOrInit(region, userId))
 
   useEffect(() => {
-    setTransactions(loadOrSeed(region, userId))
+    setTransactions(loadOrInit(region, userId))
   }, [region.code, userId])
 
   const persist = useCallback(
@@ -89,10 +91,22 @@ export function useTransactionsStore(region, userId) {
     [region, userId]
   )
 
-  const resetTransactions = useCallback(() => {
+  const loadSampleData = useCallback(() => {
     const seeded = buildTransactions(region)
     persist(seeded)
   }, [region, persist])
 
-  return { transactions, addTransaction, addManyTransactions, updateTransaction, deleteTransaction, resetTransactions }
+  const clearAllTransactions = useCallback(() => {
+    persist([])
+  }, [persist])
+
+  return {
+    transactions,
+    addTransaction,
+    addManyTransactions,
+    updateTransaction,
+    deleteTransaction,
+    loadSampleData,
+    clearAllTransactions,
+  }
 }

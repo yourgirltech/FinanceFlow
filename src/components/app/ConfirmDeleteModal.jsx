@@ -1,9 +1,9 @@
 import Modal from './Modal'
 import Button from '../ui/Button'
 
-export default function ConfirmDeleteModal({ open, onClose, onConfirm, description }) {
+export default function ConfirmDeleteModal({ open, onClose, onConfirm, description, title = 'Delete transaction?' }) {
   return (
-    <Modal open={open} onClose={onClose} title="Delete transaction?" maxWidth="max-w-sm">
+    <Modal open={open} onClose={onClose} title={title} maxWidth="max-w-sm">
       <p className="text-sm text-slate dark:text-white/60 mb-6">
         {description ? (
           <>Delete <span className="text-navy dark:text-white font-medium">"{description}"</span>? This can't be undone.</>

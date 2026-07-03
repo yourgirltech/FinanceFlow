@@ -7,6 +7,8 @@ import { useTheme } from '../lib/ThemeContext'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { getOnboardingState } from '../lib/onboarding'
+import { useTransactionsStore } from '../lib/useTransactionsStore'
+import ConfirmDeleteModal from '../components/app/ConfirmDeleteModal'
 
 function SectionCard({ title, description, children }) {
   return (
@@ -24,6 +26,8 @@ export default function Settings() {
   const { region, setRegionCode, regions } = useRegion()
   const { user } = useAuth()
   const onboarding = getOnboardingState(user?.id)
+  const { transactions, loadSampleData, clearAllTransactions } = useTransactionsStore(region, user?.id)
+  const [confirmClear, setConfirmClear] = useState(false)
 
   const involvementLabels = { simple: '🌱 Simple', planner: '📊 Planner', power: '🚀 Power User' }
   const trackingLabels = {
@@ -165,6 +169,32 @@ export default function Settings() {
             onChange={(v) => setNotifs((n) => ({ ...n, productUpdates: v }))}
           />
         </SectionCard>
+
+        <SectionCard title="Data" description="Your account starts empty — these are the only ways to add or remove bulk data.">
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="secondary" onClick={loadSampleData} className="h-9 px-4 text-xs">
+              Load sample data
+            </Button>
+            <button
+              onClick={() => setConfirmClear(true)}
+              disabled={transactions.length === 0}
+              className="h-9 px-4 text-xs rounded-full border border-red/30 text-red hover:bg-red-soft dark:hover:bg-red/10 hover:border-red/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+            >
+              Clear all my data
+            </button>
+          </div>
+          <p className="text-[11px] text-slate-light dark:text-white/35 mt-3">
+            "Load sample data" fills your account with example transactions so you can explore the app — useful for a demo, not something a real new account starts with.
+          </p>
+        </SectionCard>
+
+        <ConfirmDeleteModal
+          open={confirmClear}
+          onClose={() => setConfirmClear(false)}
+          onConfirm={() => { clearAllTransactions(); setConfirmClear(false) }}
+          title="Clear all your data?"
+          description="all your transactions"
+        />
       </div>
     </AppShell>
   )

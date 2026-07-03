@@ -102,11 +102,13 @@ export default function Budget() {
         <div className="flex-1 max-w-sm">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-white/50 text-xs">Overall usage</span>
-            <span className="font-tabular text-white/80 text-xs">{overallPct}%</span>
+            <span className={`font-tabular text-xs ${overallPct > 100 ? 'text-red' : 'text-white/80'}`}>{overallPct}%</span>
           </div>
           <div className="h-2 rounded-full bg-white/10 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-emerald to-gold transition-all duration-700"
+              className={`h-full rounded-full transition-all duration-700 ${
+                overallPct > 100 ? 'bg-red' : 'bg-gradient-to-r from-emerald to-gold'
+              }`}
               style={{ width: `${Math.min(overallPct, 100)}%` }}
             />
           </div>
@@ -115,7 +117,7 @@ export default function Budget() {
           onClick={resetTargets}
           className="text-xs text-white/40 hover:text-white/70 transition-colors sm:ml-auto shrink-0"
         >
-          Reset to defaults
+          Use suggested budgets
         </button>
       </div>
 
