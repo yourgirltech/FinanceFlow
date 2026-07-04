@@ -142,6 +142,16 @@ body {
   animation-duration: 1.4s;
 }
 
+/* The ring/glow was designed for compact, content-width buttons. Stretched
+   full-width on mobile, the conic-gradient proportions look glitchy rather
+   than premium — so mobile gets a clean solid button instead. */
+@media (max-width: 639px) {
+  .btn-glow-ring::before,
+  .btn-glow-ring::after {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

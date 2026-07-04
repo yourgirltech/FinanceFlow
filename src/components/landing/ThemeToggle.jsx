@@ -7,12 +7,12 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="relative h-9 w-9 rounded-full flex items-center justify-center border border-line dark:border-white/15 text-slate dark:text-white/70 hover:text-navy dark:hover:text-white transition-colors duration-200"
+      className="relative h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-full flex items-center justify-center border border-line dark:border-white/15 text-slate dark:text-white/70 hover:text-navy dark:hover:text-white transition-colors duration-200"
     >
       <svg
         viewBox="0 0 24 24"
         fill="none"
-        className={`h-[18px] w-[18px] absolute transition-all duration-300 ${
+        className={`h-4 w-4 sm:h-[18px] sm:w-[18px] absolute transition-all duration-300 ${
           dark ? 'opacity-0 -rotate-90 scale-50' : 'opacity-100 rotate-0 scale-100'
         }`}
       >
@@ -27,7 +27,7 @@ export default function ThemeToggle() {
       <svg
         viewBox="0 0 24 24"
         fill="none"
-        className={`h-[18px] w-[18px] absolute transition-all duration-300 ${
+        className={`h-4 w-4 sm:h-[18px] sm:w-[18px] absolute transition-all duration-300 ${
           dark ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-90 scale-50'
         }`}
       >

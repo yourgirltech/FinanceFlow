@@ -88,7 +88,15 @@ export default function Dashboard() {
   }
 
   return (
-    <AppShell title={`Welcome back, ${firstName} 👋`} subtitle="Here's what's happening with your money.">
+    <AppShell
+      title={
+        <>
+          <span className="sm:hidden">Hi, {firstName} 👋</span>
+          <span className="hidden sm:inline">Welcome back, {firstName} 👋</span>
+        </>
+      }
+      subtitle="Here's what's happening with your money."
+    >
       <div className="flex items-center justify-between gap-3 mb-5">
         <p className="text-xs text-slate-light dark:text-white/35 truncate hidden sm:block">Showing income, expenses, and spending for</p>
         <p className="text-xs text-slate-light dark:text-white/35 sm:hidden">Viewing</p>
