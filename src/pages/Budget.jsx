@@ -29,7 +29,7 @@ function BudgetCard({ budget, region, onEdit }) {
           <button
             onClick={onEdit}
             aria-label={`Edit ${budget.category} budget`}
-            className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-light dark:text-white/40 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-surface dark:hover:bg-white/[0.08] hover:text-navy dark:hover:text-white transition-all"
+            className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-light dark:text-white/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 hover:bg-surface dark:hover:bg-white/[0.08] hover:text-navy dark:hover:text-white transition-all"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
               <path d="M11 4H4v16h16v-7M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 8.5-8.5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -81,7 +81,7 @@ export default function Budget() {
   }
 
   return (
-    <AppShell title="Budget" subtitle="Monthly budgets by category — hover a card to edit its limit">
+    <AppShell title="Budget" subtitle="Monthly budgets by category — tap a category to edit its limit">
       <div className="flex items-center justify-end mb-5">
         <MonthPicker label={label} onPrev={goPrev} onNext={goNext} canGoNext={canGoNext} />
       </div>

@@ -65,18 +65,18 @@ export default function HeroPreviewCard() {
     .toUpperCase()
 
   return (
-    <div ref={ref} className="relative animate-float">
-      <div className="absolute -inset-10 bg-gradient-to-tr from-emerald/10 via-gold/10 to-transparent blur-3xl rounded-[40px]" />
+    <div ref={ref} className="relative animate-float w-full max-w-[350px] sm:max-w-[400px] mx-auto">
+      <div className="absolute -inset-6 sm:-inset-10 bg-gradient-to-tr from-emerald/10 via-gold/10 to-transparent blur-3xl rounded-[40px]" />
 
-      <div className="relative w-[350px] sm:w-[400px] rounded-[28px] bg-navy p-6 shadow-2xl shadow-navy/30 rotate-[3deg] border border-white/10">
-        <div className="flex items-center justify-between mb-5">
-          <div>
+      <div className="relative w-full rounded-[28px] bg-navy p-5 sm:p-6 shadow-2xl shadow-navy/30 rotate-[3deg] border border-white/10">
+        <div className="flex items-center justify-between mb-5 gap-2">
+          <div className="min-w-0">
             <p className="text-white/50 text-xs mb-1">Total balance</p>
-            <p className="font-tabular text-white text-[26px] font-semibold tracking-tight">
+            <p className="font-tabular text-white text-[22px] sm:text-[26px] font-semibold tracking-tight truncate">
               {formatMoney(balance, region)}
             </p>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 shrink-0">
             <div className="relative h-8 w-8 rounded-full bg-white/[0.08] flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                 <path

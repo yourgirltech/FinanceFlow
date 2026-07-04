@@ -106,7 +106,7 @@ export default function ImportStatement() {
               <p className="text-xs text-gold bg-gold-soft dark:bg-gold/10 rounded-lg px-3 py-2.5 mb-4">{warning}</p>
             )}
             <ImportPreviewTable rows={rows} region={region} onToggleRow={toggleRow} onChangeCategory={changeCategory} />
-            <div className="flex items-center justify-between mt-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
               <button
                 onClick={startOver}
                 className="text-sm font-medium text-slate dark:text-white/50 hover:text-navy dark:hover:text-white transition-colors"

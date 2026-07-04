@@ -89,8 +89,9 @@ export default function Dashboard() {
 
   return (
     <AppShell title={`Welcome back, ${firstName} 👋`} subtitle="Here's what's happening with your money.">
-      <div className="flex items-center justify-between mb-5">
-        <p className="text-xs text-slate-light dark:text-white/35">Showing income, expenses, and spending for</p>
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <p className="text-xs text-slate-light dark:text-white/35 truncate hidden sm:block">Showing income, expenses, and spending for</p>
+        <p className="text-xs text-slate-light dark:text-white/35 sm:hidden">Viewing</p>
         <MonthPicker label={label} onPrev={goPrev} onNext={goNext} canGoNext={canGoNext} />
       </div>
 

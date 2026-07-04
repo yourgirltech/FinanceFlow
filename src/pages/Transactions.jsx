@@ -21,7 +21,7 @@ function SortIcon({ direction }) {
 
 function RowActions({ onEdit, onDelete }) {
   return (
-    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+    <div className="flex items-center justify-end gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
       <button
         onClick={onEdit}
         aria-label="Edit transaction"
@@ -140,7 +140,7 @@ export default function Transactions() {
       </div>
 
       <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 overflow-hidden">
-        <div className="grid grid-cols-[90px_1fr_130px_110px_64px] sm:grid-cols-[110px_1fr_160px_130px_72px] px-5 py-3 border-b border-line dark:border-white/10 bg-surface/50 dark:bg-white/[0.02]">
+        <div className="grid grid-cols-[46px_1fr_76px_60px] sm:grid-cols-[110px_1fr_160px_130px_72px] px-3 sm:px-5 py-3 border-b border-line dark:border-white/10 bg-surface/50 dark:bg-white/[0.02]">
           <button
             onClick={() => toggleSort('date')}
             className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-slate-light dark:text-white/35 hover:text-navy dark:hover:text-white transition-colors text-left"
@@ -170,7 +170,7 @@ export default function Transactions() {
           filtered.map((t) => (
             <div
               key={t.id}
-              className="group grid grid-cols-[90px_1fr_130px_110px_64px] sm:grid-cols-[110px_1fr_160px_130px_72px] items-center px-5 py-3.5 border-b border-line dark:border-white/10 last:border-0 hover:bg-surface/40 dark:hover:bg-white/[0.03] transition-colors"
+              className="group grid grid-cols-[46px_1fr_76px_60px] sm:grid-cols-[110px_1fr_160px_130px_72px] items-center px-3 sm:px-5 py-3.5 border-b border-line dark:border-white/10 last:border-0 hover:bg-surface/40 dark:hover:bg-white/[0.03] transition-colors"
             >
               <span className="text-[12.5px] text-slate-light dark:text-white/40 font-tabular">{t.date}</span>
               <div className="min-w-0 pr-3">

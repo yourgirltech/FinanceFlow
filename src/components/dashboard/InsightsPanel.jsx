@@ -4,9 +4,9 @@ export default function InsightsPanel({ insights, goal, onEditGoal, maxCount = 3
   return (
     <div className="rounded-2xl bg-navy p-6 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-emerald/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="relative flex items-center justify-between mb-5">
-        <span className="text-xs font-semibold tracking-wide text-gold uppercase">Insights</span>
-        <button onClick={onEditGoal} className="text-xs text-white/40 hover:text-white/70 transition-colors">
+      <div className="relative flex items-center justify-between gap-2 mb-5">
+        <span className="text-xs font-semibold tracking-wide text-gold uppercase shrink-0">Insights</span>
+        <button onClick={onEditGoal} className="text-xs text-white/40 hover:text-white/70 transition-colors truncate min-w-0">
           {goal ? `🎯 ${goal.name}` : '+ Set a savings goal'}
         </button>
       </div>
