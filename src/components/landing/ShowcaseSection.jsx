@@ -18,7 +18,7 @@ export default function ShowcaseSection() {
 
   return (
     <section id="showcase" className="py-24 lg:py-32 bg-surface/50 dark:bg-white/[0.02]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">

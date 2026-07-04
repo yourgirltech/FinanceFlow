@@ -4,7 +4,7 @@ export default function TrustLogos() {
   const { region } = useRegion()
   return (
     <section className="py-12 border-y border-line dark:border-white/10 bg-white dark:bg-navy">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <p className="text-center text-xs text-slate-light dark:text-white/35 mb-7 tracking-wide">
           Works with accounts from every major bank in {region.country}
         </p>

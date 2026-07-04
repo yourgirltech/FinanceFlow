@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-surface/60 to-white dark:from-white/[0.03] dark:to-navy" />
       <div className="absolute top-32 left-1/2 -translate-x-1/2 w-[900px] h-[500px] -z-10 bg-emerald/[0.06] blur-[120px] rounded-full" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
         <div className="animate-fade-up min-w-0">
           <div className="inline-flex items-center gap-2 rounded-full border border-line dark:border-white/10 bg-white dark:bg-white/[0.04] px-3.5 py-1.5 mb-7 max-w-full">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald shrink-0" />
@@ -63,7 +63,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex justify-center lg:justify-end">
+        <div className="flex justify-center lg:justify-end min-w-0">
           <HeroPreviewCard />
         </div>
       </div>

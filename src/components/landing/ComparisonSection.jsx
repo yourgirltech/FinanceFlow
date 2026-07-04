@@ -26,7 +26,7 @@ function Check() {
 export default function ComparisonSection() {
   return (
     <section className="py-24 lg:py-28 bg-white dark:bg-navy">
-      <div className="max-w-5xl mx-auto px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="text-center max-w-lg mx-auto mb-14">
           <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
             Why it matters

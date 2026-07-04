@@ -31,7 +31,7 @@ export default function InsightSection() {
       }} />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald/10 blur-[140px] rounded-full -z-10" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="max-w-xl mb-14">
           <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
             Beyond the numbers

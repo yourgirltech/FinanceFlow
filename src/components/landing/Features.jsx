@@ -48,7 +48,7 @@ const features = [
 export default function Features() {
   return (
     <section id="features" className="py-24 lg:py-32 bg-white dark:bg-navy">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <Reveal className="max-w-xl mb-16">
           <span className="text-xs font-semibold tracking-wide text-gold uppercase mb-3 block">
             Everything, connected

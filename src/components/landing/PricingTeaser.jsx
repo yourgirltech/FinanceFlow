@@ -1,7 +1,7 @@
 export default function PricingTeaser() {
   return (
     <section id="pricing" className="py-20 bg-surface/50 dark:bg-white/[0.02] border-y border-line dark:border-white/10">
-      <div className="max-w-2xl mx-auto px-6 text-center">
+      <div className="max-w-2xl mx-auto px-5 sm:px-6 text-center">
         <span className="inline-block text-[11px] font-semibold uppercase tracking-wide text-gold bg-gold-soft dark:bg-gold/15 rounded-full px-3 py-1 mb-5">
           Coming soon
         </span>

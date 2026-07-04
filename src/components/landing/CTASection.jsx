@@ -3,7 +3,7 @@ import Button from '../ui/Button'
 export default function CTASection() {
   return (
     <section className="py-24 lg:py-32 bg-white dark:bg-navy">
-      <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+      <div className="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 text-center">
         <h2 className="font-display font-extrabold text-navy dark:text-white text-3xl sm:text-[44px] tracking-tight mb-5">
           Take control of your money,
           <br /> starting today.
