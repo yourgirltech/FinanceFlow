@@ -123,21 +123,21 @@ export default function Settings() {
 
         <SectionCard title="How you track money" description="Set during onboarding — change it anytime.">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-6">
-              <div>
+            <div className="flex items-center gap-4 sm:gap-6 flex-wrap min-w-0">
+              <div className="min-w-0">
                 <p className="text-[11px] text-slate-light dark:text-white/35 mb-0.5">Involvement level</p>
-                <p className="text-sm text-navy dark:text-white font-medium">
+                <p className="text-sm text-navy dark:text-white font-medium truncate">
                   {onboarding.involvement ? involvementLabels[onboarding.involvement] : 'Not set'}
                 </p>
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-[11px] text-slate-light dark:text-white/35 mb-0.5">Tracking style</p>
-                <p className="text-sm text-navy dark:text-white font-medium">
+                <p className="text-sm text-navy dark:text-white font-medium truncate">
                   {onboarding.trackingStyle ? trackingLabels[onboarding.trackingStyle] : 'Not set'}
                 </p>
               </div>
             </div>
-            <Button variant="secondary" onClick={() => navigate('/onboarding')} className="h-9 px-4 text-xs">
+            <Button variant="secondary" onClick={() => navigate('/onboarding')} className="h-9 px-4 text-xs shrink-0">
               Retake setup
             </Button>
           </div>

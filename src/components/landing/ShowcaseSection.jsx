@@ -53,11 +53,11 @@ export default function ShowcaseSection() {
           <div className="relative">
             <div className="absolute -inset-6 bg-gradient-to-br from-navy/5 to-transparent rounded-[32px] -z-10" />
             <div className="rounded-2xl bg-white dark:bg-white/[0.04] border border-line dark:border-white/10 shadow-2xl shadow-navy/10 overflow-hidden transition-transform duration-500 hover:-translate-y-1.5 hover:shadow-navy/15">
-              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-line dark:border-white/10 bg-surface/60 dark:bg-white/[0.03]">
-                <span className="h-2.5 w-2.5 rounded-full bg-red/60" />
-                <span className="h-2.5 w-2.5 rounded-full bg-gold/60" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald/60" />
-                <span className="ml-3 text-[11px] text-slate-light dark:text-white/30 font-tabular">app.financeflow.ng/transactions</span>
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-line dark:border-white/10 bg-surface/60 dark:bg-white/[0.03] min-w-0">
+                <span className="h-2.5 w-2.5 rounded-full bg-red/60 shrink-0" />
+                <span className="h-2.5 w-2.5 rounded-full bg-gold/60 shrink-0" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald/60 shrink-0" />
+                <span className="ml-3 text-[11px] text-slate-light dark:text-white/30 font-tabular truncate min-w-0">app.financeflow.ng/transactions</span>
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">

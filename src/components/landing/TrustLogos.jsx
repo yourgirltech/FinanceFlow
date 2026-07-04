@@ -8,7 +8,7 @@ export default function TrustLogos() {
         <p className="text-center text-xs text-slate-light dark:text-white/35 mb-7 tracking-wide">
           Works with accounts from every major bank in {region.country}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-12 gap-y-4 sm:gap-y-6">
           {region.banks.map((bank) => (
             <span
               key={bank}
