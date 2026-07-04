@@ -31,7 +31,7 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-[60px] sm:h-[72px] gap-3">
+      <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 sm:h-[72px] gap-3">
         <Logo dark={dark} />
 
         <div className="hidden md:flex items-center gap-8">
@@ -63,16 +63,15 @@ export default function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile: primary CTA always visible + a hamburger for everything else */}
-        <div className="flex md:hidden items-center gap-2 shrink-0">
-          <Button to="/signup" variant="navGold" className="!h-9 !px-3.5 !text-[13px] whitespace-nowrap">
-            Sign up
-          </Button>
+        {/* Mobile: keep this bar minimal — just the logo and a menu toggle.
+            Get Started lives inside the expandable panel below, full-width,
+            where it has room to breathe instead of fighting for space here. */}
+        <div className="flex md:hidden items-center shrink-0">
           <button
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
-            className="h-9 w-9 shrink-0 rounded-lg flex items-center justify-center text-navy dark:text-white hover:bg-surface dark:hover:bg-white/[0.06] transition-colors"
+            className="h-10 w-10 shrink-0 rounded-lg flex items-center justify-center text-navy dark:text-white hover:bg-surface dark:hover:bg-white/[0.06] transition-colors"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
               {menuOpen ? (
@@ -91,7 +90,7 @@ export default function Navbar() {
           menuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-5 pb-7 pt-3 border-t border-line dark:border-white/10 bg-white dark:bg-navy">
+        <div className="px-5 pb-7 pt-4 border-t border-line dark:border-white/10 bg-white dark:bg-navy">
           <div className="flex flex-col gap-1 mb-5">
             {links.map((link) => (
               <a
@@ -120,9 +119,12 @@ export default function Navbar() {
             <ThemeToggle />
           </div>
 
-          <div className="pt-4 border-t border-line dark:border-white/10">
+          <div className="flex flex-col gap-2.5 pt-4 border-t border-line dark:border-white/10">
             <Button to="/login" variant="secondary" className="w-full">
               Log in
+            </Button>
+            <Button to="/signup" variant="navGold" className="w-full">
+              Get Started
             </Button>
           </div>
         </div>

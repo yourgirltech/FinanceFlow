@@ -127,7 +127,7 @@ export default function Signup() {
                 <p className="text-xs text-red bg-red-soft dark:bg-red/10 rounded-lg px-3 py-2.5">{error}</p>
               )}
 
-              <Button type="submit" variant="navGold" ring disabled={submitting} className="w-full h-11 mt-2 disabled:opacity-60">
+              <Button type="submit" variant="navGold" disabled={submitting} className="w-full h-11 mt-2 disabled:opacity-60">
                 {submitting ? 'Creating account…' : 'Create free account'}
               </Button>
             </form>

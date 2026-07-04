@@ -58,7 +58,7 @@ export default function Onboarding() {
               Back
             </button>
             {step === TOTAL_STEPS - 1 ? (
-              <Button variant="navGold" ring onClick={finish} disabled={!canContinue} className="h-11 px-7 disabled:opacity-50">
+              <Button variant="navGold" onClick={finish} disabled={!canContinue} className="h-11 px-7 disabled:opacity-50">
                 Finish setup
               </Button>
             ) : (

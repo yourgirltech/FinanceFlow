@@ -16,63 +16,57 @@ const legalLinks = ['Privacy', 'Terms', 'Security']
 
 export default function Footer() {
   return (
-    <footer className="bg-navy pt-12 sm:pt-16 pb-10">
+    <footer className="bg-navy pt-12 sm:pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-        {/* Logo + tagline — always shown, centered on mobile for a calmer look */}
-        <div className="flex flex-col items-center text-center sm:items-start sm:text-left mb-10 sm:mb-0">
-          <Logo dark className="mb-4" />
-          <p className="text-white/50 text-sm leading-relaxed max-w-xs">
-            A calm, precise way to see where your money goes.
-          </p>
-        </div>
-
-        {/* Link columns — collapsed out of the way on mobile. A full sitemap
-            isn't useful on a small screen; the essentials (About/Contact,
-            legal) still live in the bottom bar below. */}
-        <div className="hidden sm:grid sm:grid-cols-2 sm:gap-10 sm:mt-10 sm:pb-12 sm:border-b sm:border-white/10">
-          {columns.map((col) => (
-            <div key={col.title} id={col.id}>
-              <h4 className="text-white text-sm font-semibold mb-4">{col.title}</h4>
-              <ul className="space-y-3">
-                {col.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href={link === 'Contact' ? '#contact' : '#'}
-                      id={link === 'Contact' ? 'contact' : undefined}
-                      className="text-white/50 hover:text-white text-sm transition-colors"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile-only anchors for #about/#contact, since the columns above are hidden */}
-        <span id="about" className="sm:hidden" />
-        <span id="contact" className="sm:hidden" />
-
-        <div className="h-px bg-white/10 mb-8 sm:hidden" />
-
-        {/* Bottom bar */}
-        <div className="flex flex-col items-center gap-5 sm:flex-row sm:justify-between sm:items-center sm:pt-6 sm:gap-4">
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 order-2 sm:order-1">
-            {legalLinks.map((link) => (
-              <a key={link} href="#" className="text-white/50 hover:text-white text-xs transition-colors">
-                {link}
-              </a>
-            ))}
+        {/* Brand + link columns */}
+        <div className="pb-8 sm:pb-12 border-b border-white/10 sm:grid sm:grid-cols-3 sm:gap-10">
+          <div className="mb-8 sm:mb-0 text-center sm:text-left">
+            <Logo dark className="mb-4 justify-center sm:justify-start" />
+            <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto sm:mx-0">
+              A calm, precise way to see where your money goes.
+            </p>
           </div>
 
-          <p className="text-white/35 text-xs text-center order-3 sm:order-2 sm:text-right">
-            Made for people who want to know where their money goes.
+          <div className="grid grid-cols-2 gap-6 sm:contents">
+            {columns.map((col) => (
+              <div key={col.title} id={col.id}>
+                <h4 className="text-white text-xs sm:text-sm font-semibold uppercase sm:normal-case tracking-wide sm:tracking-normal mb-3 sm:mb-4">
+                  {col.title}
+                </h4>
+                <ul className="space-y-2.5 sm:space-y-3">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href={link === 'Contact' ? '#contact' : '#'}
+                        id={link === 'Contact' ? 'contact' : undefined}
+                        className="text-white/50 hover:text-white text-[13px] sm:text-sm transition-colors"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="pt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          <p className="text-white/35 text-xs order-2 sm:order-1">
+            © {new Date().getFullYear()} Finance Flow. All rights reserved.
           </p>
 
-          <p className="text-white/35 text-xs order-1 sm:order-3">
-            © {new Date().getFullYear()} Finance Flow
-          </p>
+          <div className="flex items-center gap-4 order-1 sm:order-2">
+            {legalLinks.map((link, i) => (
+              <span key={link} className="flex items-center gap-4">
+                <a href="#" className="text-white/40 hover:text-white/70 text-xs transition-colors">
+                  {link}
+                </a>
+                {i < legalLinks.length - 1 && <span className="h-1 w-1 rounded-full bg-white/15" />}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

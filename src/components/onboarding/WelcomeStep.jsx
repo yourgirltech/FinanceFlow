@@ -22,7 +22,7 @@ export default function WelcomeStep({ firstName, onNext }) {
         <FlowLine className="w-full h-14" />
       </div>
 
-      <Button variant="navGold" ring onClick={onNext} className="h-11 px-8">
+      <Button variant="navGold" onClick={onNext} className="h-11 px-8">
         Let's get started
       </Button>
     </div>
