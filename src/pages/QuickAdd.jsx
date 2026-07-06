@@ -3,13 +3,13 @@ import AppShell from '../components/app/AppShell'
 import QuickAddBar from '../components/quickadd/QuickAddBar'
 import QuickAddFeed from '../components/quickadd/QuickAddFeed'
 import QuickAddSummary from '../components/quickadd/QuickAddSummary'
+import AvailableToSpendList from '../components/quickadd/AvailableToSpendList'
 import { useRegion } from '../lib/RegionContext'
 import { useAuth } from '../lib/AuthContext'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
-import { useSelectedMonth } from '../lib/useSelectedMonth'
-import { computeBudgetSummary } from '../lib/budgetSummary'
-import { totalsFromTransactions } from '../lib/mockData'
+import { computeMoneyModel } from '../lib/budgetSummary'
+import { currentRealMonthYm, filterTransactionsByMonth } from '../lib/mockData'
 
 const EXAMPLES = ['Lunch 15', 'Salary 2500', 'Netflix 18', 'Bolt 20', 'Fuel 80']
 
@@ -18,12 +18,15 @@ export default function QuickAdd() {
   const { user } = useAuth()
   const { transactions, addTransaction } = useTransactionsStore(region, user?.id)
   const { targets } = useBudgetTargetsStore(region, user?.id)
-  const { filtered } = useSelectedMonth(transactions)
   const [sessionEntries, setSessionEntries] = useState([])
   const [prefill, setPrefill] = useState(undefined)
 
-  const { income, expenses } = totalsFromTransactions(transactions)
-  const { byCategory: budgetByCategory } = computeBudgetSummary(targets, filtered)
+  // "Available to spend" reflects real right-now spending, so it's always
+  // scoped to today's actual calendar month — not whichever month Dashboard
+  // happens to be showing.
+  const currentMonthTransactions = filterTransactionsByMonth(transactions, currentRealMonthYm())
+  const { totalIncome, totalBudgeted, balance, byCategory, anyOverBudget } =
+    computeMoneyModel(transactions, targets, currentMonthTransactions)
 
   function handleAdd(parsed) {
     addTransaction(parsed)
@@ -38,8 +41,15 @@ export default function QuickAdd() {
   return (
     <AppShell title="Quick Add ⚡" subtitle="Log income and expenses in under 5 seconds.">
       <div className="max-w-2xl mx-auto">
-        <QuickAddSummary income={income} expenses={expenses} region={region} />
-        <QuickAddBar region={region} onAdd={handleAdd} prefill={prefill} budgetByCategory={budgetByCategory} />
+        <QuickAddSummary
+          totalIncome={totalIncome}
+          totalBudgeted={totalBudgeted}
+          balance={balance}
+          anyOverBudget={anyOverBudget}
+          region={region}
+        />
+        <AvailableToSpendList byCategory={byCategory} region={region} />
+        <QuickAddBar region={region} onAdd={handleAdd} prefill={prefill} budgetByCategory={byCategory} />
 
         <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-4 mb-8 text-xs text-slate-light dark:text-white/35">
           <span className="mr-0.5">Try:</span>

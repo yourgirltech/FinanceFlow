@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Modal from './Modal'
 import Button from '../ui/Button'
-import { CATEGORIES, categoryColor } from '../../lib/mockData'
+import { CATEGORIES } from '../../lib/mockData'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -10,19 +10,22 @@ function toDisplayDate(isoDate) {
   return `${MONTHS[Number(m) - 1]} ${d}`
 }
 
-const emptyForm = {
-  description: '',
-  category: CATEGORIES[2].name, // Food & Dining
-  amount: '',
-  date: new Date().toISOString().slice(0, 10),
+function makeEmptyForm(categories) {
+  const defaultCategory = categories.find((c) => c.name === 'Food & Dining') || categories[0]
+  return {
+    description: '',
+    category: defaultCategory?.name || '',
+    amount: '',
+    date: new Date().toISOString().slice(0, 10),
+  }
 }
 
-export default function TransactionModal({ open, onClose, onSubmit, initial }) {
+export default function TransactionModal({ open, onClose, onSubmit, initial, categories = CATEGORIES }) {
   const isEdit = Boolean(initial)
   const [form, setForm] = useState(() =>
     initial
       ? { description: initial.description, category: initial.category, amount: String(initial.amount), date: initial.fullDate }
-      : emptyForm
+      : makeEmptyForm(categories)
   )
   const [error, setError] = useState('')
 
@@ -37,23 +40,25 @@ export default function TransactionModal({ open, onClose, onSubmit, initial }) {
     if (!amountNum || amountNum <= 0) return setError('Enter an amount greater than zero.')
     if (!form.date) return setError('Pick a date.')
 
-    const kind = CATEGORIES.find((c) => c.name === form.category)?.kind ?? 'expense'
+    const matched = categories.find((c) => c.name === form.category)
+    const kind = matched?.kind ?? 'expense'
+    const color = matched?.color ?? 'var(--color-slate)'
 
     onSubmit({
       description: form.description.trim(),
       category: form.category,
-      color: categoryColor(form.category),
+      color,
       kind,
       amount: Math.round(amountNum),
       date: toDisplayDate(form.date),
       fullDate: form.date,
     })
-    setForm(emptyForm)
+    setForm(makeEmptyForm(categories))
     setError('')
   }
 
   function handleClose() {
-    setForm(emptyForm)
+    setForm(makeEmptyForm(categories))
     setError('')
     onClose()
   }
@@ -80,7 +85,7 @@ export default function TransactionModal({ open, onClose, onSubmit, initial }) {
               onChange={(e) => update('category', e.target.value)}
               className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] px-3 text-sm text-navy dark:text-white focus:outline-none focus:border-gold transition-colors [color-scheme:light] dark:[color-scheme:dark]"
             >
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <option key={c.name} value={c.name} className="bg-white text-navy dark:bg-navy-2 dark:text-white">
                   {c.name}
                 </option>

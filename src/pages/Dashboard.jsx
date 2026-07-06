@@ -13,11 +13,11 @@ import { useTransactionsStore } from '../lib/useTransactionsStore'
 import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
 import { useSelectedMonth } from '../lib/useSelectedMonth'
 import { useSavingsGoal } from '../lib/useSavingsGoal'
-import { computeBudgetSummary } from '../lib/budgetSummary'
+import { computeMoneyModel } from '../lib/budgetSummary'
 import { generateInsights } from '../lib/insightsEngine'
 import { getOnboardingState } from '../lib/onboarding'
 import { formatMoney } from '../lib/format'
-import { categoryBreakdownFromTransactions, realMonthlyTrend, totalsFromTransactions } from '../lib/mockData'
+import { categoryBreakdownFromTransactions, realMonthlyTrend } from '../lib/mockData'
 
 const icons = {
   balance: <path d="M3 8l9-5 9 5-9 5-9-5zM3 8v8l9 5 9-5V8" strokeLinecap="round" strokeLinejoin="round" />,
@@ -25,7 +25,6 @@ const icons = {
   expenses: <path d="M6 9l6 6 4-4 6 8" strokeLinecap="round" strokeLinejoin="round" />,
   savings: <path d="M12 3v2M12 19v2M5 5l1.5 1.5M17.5 17.5L19 19M3 12h2M19 12h2M5 19l1.5-1.5M17.5 6.5L19 5M12 8a4 4 0 100 8 4 4 0 000-8z" strokeLinecap="round" strokeLinejoin="round" />,
   netWorth: <path d="M4 4v16h16M8 15l3-4 3 3 5-7" strokeLinecap="round" strokeLinejoin="round" />,
-  budget: <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" strokeLinecap="round" strokeLinejoin="round" />,
 }
 
 function Icon({ path }) {
@@ -47,26 +46,21 @@ export default function Dashboard() {
 
   const firstName = (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there').split(' ')[0]
 
-  // Balance is cumulative — every transaction ever, like a real running
-  // balance. Income/Expenses/Savings Rate/breakdown/budget are scoped to
-  // whichever month is selected, so they mean what their label says even
-  // after a big CSV import spanning many months.
-  const { income: allTimeIncome, expenses: allTimeExpenses } = totalsFromTransactions(transactions)
-  const balance = allTimeIncome - allTimeExpenses
-  const netWorth = Math.round(balance * 4.4)
-
   const { selected, filtered, label, goPrev, goNext, canGoNext } = useSelectedMonth(transactions)
-  const { income, expenses } = totalsFromTransactions(filtered)
-  const savingsRate = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0
+
+  // The envelope-budgeting model, shared with Budget.jsx and Quick Add:
+  // Balance = Total Income (all-time) − Total Budgeted (what you've set
+  // aside across categories, counted the moment it's budgeted, not only
+  // once spent). Each category's own "available to spend" only drops as
+  // real expenses land against it.
+  const { totalIncome, totalBudgeted, balance, byCategory, anyOverBudget } =
+    computeMoneyModel(transactions, targets, filtered)
+
+  const netWorth = Math.round(balance * 4.4)
+  const savingsRate = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : 0
   const breakdown = categoryBreakdownFromTransactions(filtered)
   const trend = realMonthlyTrend(transactions)
 
-  // Same helper Budget.jsx uses — Quick Add writes to the same transaction
-  // store, so an expense entered there immediately moves this number too.
-  const { remaining: budgetRemaining, byCategory } = computeBudgetSummary(targets, filtered)
-
-  // Real, computed insights — no external AI call, every number here comes
-  // straight from the user's own transactions and budget.
   const insights = generateInsights({
     transactions,
     filtered,
@@ -98,7 +92,7 @@ export default function Dashboard() {
       subtitle="Here's what's happening with your money."
     >
       <div className="flex items-center justify-between gap-3 mb-5">
-        <p className="text-xs text-slate-light dark:text-white/35 truncate hidden sm:block">Showing income, expenses, and spending for</p>
+        <p className="text-xs text-slate-light dark:text-white/35 truncate hidden sm:block">Showing budgets and spending for</p>
         <p className="text-xs text-slate-light dark:text-white/35 sm:hidden">Viewing</p>
         <MonthPicker label={label} onPrev={goPrev} onNext={goNext} canGoNext={canGoNext} />
       </div>
@@ -106,19 +100,18 @@ export default function Dashboard() {
       {involvement === 'simple' ? (
         <>
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            <StatCard label="Total Balance" value={balance} icon={<Icon path={icons.balance} />} />
+            <StatCard label="Total Balance" value={balance} tone={anyOverBudget ? 'down' : 'neutral'} icon={<Icon path={icons.balance} />} />
             <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-5 flex items-center gap-4">
               <span className="text-2xl shrink-0">
-                {expenses <= income * 0.7 ? '🌱' : expenses <= income ? '👍' : '⚠️'}
+                {anyOverBudget ? '⚠️' : balance >= 0 ? '🌱' : '👍'}
               </span>
               <p className="text-[13.5px] text-white/80 leading-relaxed">
-                You've spent <span className="text-white font-semibold font-tabular">{formatMoney(expenses, region)}</span> of{' '}
-                <span className="text-white font-semibold font-tabular">{formatMoney(income, region)}</span> in {label} —{' '}
-                <span className="text-gold font-semibold">{savingsRate}% saved</span>.{' '}
-                {budgetRemaining >= 0 ? (
-                  <>You have <span className="text-emerald font-semibold font-tabular">{formatMoney(budgetRemaining, region)}</span> left in your budget.</>
+                You've budgeted <span className="text-white font-semibold font-tabular">{formatMoney(totalBudgeted, region)}</span> of{' '}
+                <span className="text-white font-semibold font-tabular">{formatMoney(totalIncome, region)}</span> income in {label}.{' '}
+                {anyOverBudget ? (
+                  <>A category is <span className="text-red font-semibold">over its limit</span> — check Budget.</>
                 ) : (
-                  <>You're <span className="text-red font-semibold font-tabular">{formatMoney(Math.abs(budgetRemaining), region)}</span> over your budget.</>
+                  <>You have <span className="text-emerald font-semibold font-tabular">{formatMoney(balance, region)}</span> left unbudgeted.</>
                 )}
               </p>
             </div>
@@ -130,17 +123,11 @@ export default function Dashboard() {
         </>
       ) : involvement === 'planner' ? (
         <>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-            <StatCard label="Total Balance" value={balance} icon={<Icon path={icons.balance} />} />
-            <StatCard label="Income" value={income} tone="up" icon={<Icon path={icons.income} />} />
-            <StatCard label="Expenses" value={expenses} tone="down" icon={<Icon path={icons.expenses} />} />
-            <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone="up" icon={<Icon path={icons.savings} />} />
-            <StatCard
-              label={budgetRemaining >= 0 ? 'Budget Remaining' : 'Over Budget'}
-              value={Math.abs(budgetRemaining)}
-              tone={budgetRemaining >= 0 ? 'up' : 'down'}
-              icon={<Icon path={icons.budget} />}
-            />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <StatCard label="Total Balance" value={balance} tone={anyOverBudget ? 'down' : 'neutral'} icon={<Icon path={icons.balance} />} />
+            <StatCard label="Income" value={totalIncome} tone="up" icon={<Icon path={icons.income} />} />
+            <StatCard label="Expenses (budgeted)" value={totalBudgeted} tone="down" icon={<Icon path={icons.expenses} />} />
+            <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone={anyOverBudget ? 'down' : 'up'} icon={<Icon path={icons.savings} />} />
           </div>
           <div className="mb-5">
             <InsightsPanel insights={insights} goal={goal} onEditGoal={() => setGoalModalOpen(true)} maxCount={2} />
@@ -152,19 +139,13 @@ export default function Dashboard() {
         </>
       ) : (
         <>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <div className="sm:col-span-2 lg:col-span-1">
-              <StatCard label="Total Balance" value={balance} icon={<Icon path={icons.balance} />} />
+              <StatCard label="Total Balance" value={balance} tone={anyOverBudget ? 'down' : 'neutral'} icon={<Icon path={icons.balance} />} />
             </div>
-            <StatCard label="Income" value={income} tone="up" icon={<Icon path={icons.income} />} />
-            <StatCard label="Expenses" value={expenses} tone="down" icon={<Icon path={icons.expenses} />} />
-            <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone="up" icon={<Icon path={icons.savings} />} />
-            <StatCard
-              label={budgetRemaining >= 0 ? 'Budget Remaining' : 'Over Budget'}
-              value={Math.abs(budgetRemaining)}
-              tone={budgetRemaining >= 0 ? 'up' : 'down'}
-              icon={<Icon path={icons.budget} />}
-            />
+            <StatCard label="Income" value={totalIncome} tone="up" icon={<Icon path={icons.income} />} />
+            <StatCard label="Expenses (budgeted)" value={totalBudgeted} tone="down" icon={<Icon path={icons.expenses} />} />
+            <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone={anyOverBudget ? 'down' : 'up'} icon={<Icon path={icons.savings} />} />
             <StatCard label="Net Worth" value={netWorth} icon={<Icon path={icons.netWorth} />} />
           </div>
           <div className="mb-5">

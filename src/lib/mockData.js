@@ -170,6 +170,15 @@ export function filterTransactionsByMonth(transactions, ym) {
   return transactions.filter((t) => t.fullDate.slice(0, 7) === ym)
 }
 
+// Today's real calendar month, as a 'YYYY-MM' key — used where "current"
+// genuinely means right now (e.g. Quick Add's live available-to-spend view),
+// as distinct from "whichever month has the most recent activity" that
+// Dashboard/Budget/Analytics default to.
+export function currentRealMonthYm() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
 export function totalsFromTransactions(transactions) {
   const income = transactions.filter((t) => t.kind === 'income').reduce((s, t) => s + t.amount, 0)
   const expenses = transactions.filter((t) => t.kind === 'expense').reduce((s, t) => s + t.amount, 0)

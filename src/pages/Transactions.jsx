@@ -10,6 +10,7 @@ import { useAuth } from '../lib/AuthContext'
 import { formatMoney } from '../lib/format'
 import { CATEGORIES, getAvailableMonths } from '../lib/mockData'
 import { useTransactionsStore } from '../lib/useTransactionsStore'
+import { useBudgetTargetsStore } from '../lib/useBudgetTargetsStore'
 
 function SortIcon({ direction }) {
   return (
@@ -48,6 +49,14 @@ export default function Transactions() {
   const { region } = useRegion()
   const { user } = useAuth()
   const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactionsStore(region, user?.id)
+  const { targets } = useBudgetTargetsStore(region, user?.id)
+
+  const allCategories = useMemo(() => {
+    const custom = targets
+      .filter((t) => t.custom)
+      .map((t) => ({ name: t.category, color: t.color, kind: 'expense' }))
+    return [...CATEGORIES, ...custom]
+  }, [targets])
 
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
@@ -129,7 +138,7 @@ export default function Transactions() {
             className="w-full h-10 rounded-xl border border-line dark:border-white/15 bg-white dark:bg-white/[0.04] pl-10 pr-3.5 text-sm text-navy dark:text-white placeholder:text-slate-light dark:placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors"
           />
         </div>
-        <CategoryFilter categories={CATEGORIES} value={category} onChange={setCategory} />
+        <CategoryFilter categories={allCategories} value={category} onChange={setCategory} />
         <MonthFilter months={availableMonths} value={month} onChange={setMonth} />
         <Button variant="navGold" onClick={openAdd} className="h-10 px-4 sm:ml-auto">
           <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 -ml-1">
@@ -199,6 +208,7 @@ export default function Transactions() {
         onClose={() => { setModalOpen(false); setEditingTxn(null) }}
         onSubmit={handleSubmit}
         initial={editingTxn}
+        categories={allCategories}
       />
 
       <ConfirmDeleteModal

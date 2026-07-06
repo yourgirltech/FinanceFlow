@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import Logo from '../landing/Logo'
 import ThemeToggle from '../landing/ThemeToggle'
 import RegionSwitcher from '../landing/RegionSwitcher'
@@ -10,6 +11,7 @@ import { useAuth } from '../../lib/AuthContext'
 export default function Topbar({ onMenuClick }) {
   const { dark } = useTheme()
   const { user } = useAuth()
+  const navigate = useNavigate()
   const displayName = user?.user_metadata?.full_name || user?.email || 'F'
   const initial = displayName.trim().charAt(0).toUpperCase() || 'F'
 
@@ -35,9 +37,14 @@ export default function Topbar({ onMenuClick }) {
           <RegionSwitcher />
         </div>
         <ThemeToggle />
-        <div className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-full bg-gold/90 flex items-center justify-center text-navy text-xs sm:text-sm font-bold font-display">
+        <button
+          onClick={() => navigate('/settings')}
+          aria-label="Go to Settings"
+          title="Settings"
+          className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-full bg-gold/90 hover:bg-gold flex items-center justify-center text-navy text-xs sm:text-sm font-bold font-display transition-colors"
+        >
           {initial}
-        </div>
+        </button>
       </div>
     </header>
   )
