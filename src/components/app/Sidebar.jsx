@@ -33,7 +33,7 @@ const ALL_NAV_ITEMS = [
   {
     to: '/budget',
     label: 'Budget',
-    tier: 'planner',
+    tier: 'simple',
     icon: <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
@@ -59,8 +59,9 @@ const ALL_NAV_ITEMS = [
   },
 ]
 
-// Simple sees the essentials; Planner adds Budget; Power (or anyone who
-// hasn't been through onboarding yet, for back-compat) sees everything.
+// Budget is available to everyone regardless of involvement level. Simple
+// sees the everyday essentials plus Budget; Power (or anyone who hasn't been
+// through onboarding yet, for back-compat) additionally sees Analytics.
 
 export default function Sidebar({ open, onClose }) {
   const { dark } = useTheme()
