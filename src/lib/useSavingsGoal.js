@@ -14,9 +14,7 @@ function load(region, userId) {
   return null // no goal set yet
 }
 
-// A lightweight, user-set savings goal (name + target amount) — powers the
-// "reach your goal in N months" insight. Nothing is invented here; if the
-// user hasn't set one, the insights engine simply skips that insight.
+// A lightweight, user-set savings goal (name + target amount) 
 export function useSavingsGoal(region, userId) {
   const [goal, setGoalState] = useState(() => load(region, userId))
 

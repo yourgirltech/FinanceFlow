@@ -1,6 +1,5 @@
 // Plain (non-hook) helpers so both the Onboarding page and the post-login
 // redirect logic in Login/Signup can check/save this without needing a
-// mounted React component tree in between.
 
 function storageKey(userId) {
   return `finance-flow-onboarding-${userId || 'guest'}`

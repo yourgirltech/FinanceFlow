@@ -5,9 +5,7 @@ import RegionSwitcher from '../landing/RegionSwitcher'
 import { useTheme } from '../../lib/ThemeContext'
 import { useAuth } from '../../lib/AuthContext'
 
-// Pure chrome — no page title here. Each page renders its own heading in the
-// content area (via AppShell) where it has room to breathe, instead of being
-// squeezed into this fixed-height bar alongside menu/region/theme/avatar.
+
 export default function Topbar({ onMenuClick }) {
   const { dark } = useTheme()
   const { user } = useAuth()

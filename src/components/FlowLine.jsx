@@ -1,5 +1,3 @@
-// The brand's signature motif: a hand-drawn-feeling line that trends upward,
-// with a traveling dot — literally "flow". Reused across Landing + Dashboard.
 export default function FlowLine({ className = '', animate = true }) {
   return (
     <svg

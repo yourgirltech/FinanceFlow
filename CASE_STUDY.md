@@ -2,8 +2,6 @@
 
 **A personal finance platform built to feel like a real fintech product, not a portfolio demo.**
 
-Live at: *[add your Netlify URL here once deployed]*
-Repo: *[add your GitHub URL here]*
 
 ---
 

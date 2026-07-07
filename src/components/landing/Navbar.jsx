@@ -63,9 +63,7 @@ export default function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile: keep this bar minimal — just the logo and a menu toggle.
-            Get Started lives inside the expandable panel below, full-width,
-            where it has room to breathe instead of fighting for space here. */}
+        {/* Mobile: */}
         <div className="flex md:hidden items-center shrink-0">
           <button
             onClick={() => setMenuOpen((o) => !o)}

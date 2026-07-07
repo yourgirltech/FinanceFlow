@@ -95,9 +95,7 @@ body {
   50% { opacity: 1; }
 }
 
-/* Animated conic-gradient ring border, used on the primary "Get Started" CTAs
-   (not the navbar one, which stays plain for visual hierarchy). Rotates slowly
-   and pulses a soft gold glow behind it — no extra DOM needed, just ::before. */
+/* Animated conic-gradient ring border, used on the primary "Get Started" CTAs*/
 .btn-glow-ring {
   position: relative;
   isolation: isolate;
@@ -142,9 +140,7 @@ body {
   animation-duration: 1.4s;
 }
 
-/* The ring/glow was designed for compact, content-width buttons. Stretched
-   full-width on mobile, the conic-gradient proportions look glitchy rather
-   than premium — so mobile gets a clean solid button instead. */
+
 @media (max-width: 639px) {
   .btn-glow-ring::before,
   .btn-glow-ring::after {

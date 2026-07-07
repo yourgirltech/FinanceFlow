@@ -15,8 +15,7 @@ export default function ResetPassword() {
   const [done, setDone] = useState(false)
 
   // Supabase's client automatically parses the recovery token from the URL
-  // (the link from the email) and establishes a temporary session — that's
-  // what `user` here reflects once it resolves.
+  // (the link from the email) and establishes a temporary session 
   const linkExpired = isSupabaseConfigured && !loading && !user
 
   async function handleSubmit(e) {

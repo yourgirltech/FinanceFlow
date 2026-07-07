@@ -12,10 +12,7 @@ function shiftYm(ym, delta) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
-// Scopes a transaction list to a single selected month. Defaults to the most
-// recent month present in the data (so seeded demo data, or a freshly
-// imported CSV of old statements, both "just work" without landing on an
-// empty view) — and re-syncs to that once when data first arrives.
+// Scopes a transaction list to a single selected month.
 export function useSelectedMonth(transactions) {
   const latestDataYm = useMemo(() => {
     if (transactions.length === 0) return null

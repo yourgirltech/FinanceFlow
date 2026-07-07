@@ -41,8 +41,6 @@ export function AuthProvider({ children }) {
       options: { data: { full_name: fullName } },
     })
     if (error) return { error: error.message }
-    // If email confirmation is enabled in your Supabase project, data.session
-    // will be null here until the user clicks the confirmation link.
     setUser(data.user)
     return { user: data.user, needsEmailConfirmation: !data.session }
   }

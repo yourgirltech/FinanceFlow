@@ -7,7 +7,7 @@ function storageKey(region, userId) {
 
 // New accounts (or a first-time switch to a new currency) start completely
 // empty — a real user's dashboard should read ₦0 until they've actually
-// logged something, not be pre-populated with fake demo data.
+// logged something
 function loadOrInit(region, userId) {
   const key = storageKey(region, userId)
   try {

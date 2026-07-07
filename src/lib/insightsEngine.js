@@ -17,9 +17,7 @@ function categoryTotals(transactions) {
 }
 
 // Compares the selected month's category spending against the previous
-// month and surfaces the single biggest mover (up or down), if it's a
-// meaningful swing. This is the exact insight your landing page promises:
-// "Your food expenses increased by 14% this month."
+
 function trendInsight(transactions, monthKey, region, formatMoney) {
   const prevKey = shiftYm(monthKey, -1)
   const current = categoryTotals(filterTransactionsByMonth(transactions, monthKey))
@@ -48,8 +46,7 @@ function trendInsight(transactions, monthKey, region, formatMoney) {
 }
 
 // Projects whether the user is on pace to go over a budget category, based
-// on how far through the month they are — only meaningful when looking at
-// the real current month (a past month is already "finished").
+// on how far through the month they are 
 function pacingInsight(byCategory, monthKey, region, formatMoney) {
   const now = new Date()
   const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -58,8 +55,7 @@ function pacingInsight(byCategory, monthKey, region, formatMoney) {
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
   const dayOfMonth = now.getDate()
   const fractionElapsed = dayOfMonth / daysInMonth
-  if (fractionElapsed < 0.15) return null // too early to project meaningfully
-
+  if (fractionElapsed < 0.15) return null 
   let worst = null
   for (const b of byCategory) {
     if (b.total <= 0 || b.spent <= 0) continue
@@ -80,7 +76,7 @@ function pacingInsight(byCategory, monthKey, region, formatMoney) {
 }
 
 // Projects time-to-goal from the average of the last 3 months' savings rate
-// (income minus expenses). Only fires if the user has actually set a goal.
+// (income minus expenses).
 function goalInsight(transactions, goal, region, formatMoney) {
   if (!goal || !goal.amount) return null
 
@@ -101,8 +97,7 @@ function goalInsight(transactions, goal, region, formatMoney) {
   if (avgSavings <= 0) return null
 
   const monthsToGoal = Math.ceil(goal.amount / avgSavings)
-  if (monthsToGoal > 240) return null // absurdly far off, not a useful insight
-
+  if (monthsToGoal > 240) return null 
   return {
     id: 'goal',
     icon: '💡',

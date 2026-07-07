@@ -31,9 +31,7 @@ function parseAmount(raw) {
   return isNaN(n) ? null : n
 }
 
-// Shared by both CSV and Excel — once each is parsed into an array of plain
-// row objects keyed by header, the column-guessing and transaction-building
-// logic is identical.
+// Shared by both CSV and Excel
 function rowsFromObjects(data, headers) {
   if (!headers || headers.length === 0) {
     return { rows: [], warning: "Couldn't find any columns in this file." }

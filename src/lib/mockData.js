@@ -40,8 +40,7 @@ export function categoryKind(name) {
   return CATEGORIES.find((c) => c.name === name)?.kind ?? 'expense'
 }
 
-// Shared by Quick Add and Import Statement — maps a loose keyword found in a
-// description to one of our real categories. First match wins.
+// Shared by Quick Add and Import Statement 
 const KEYWORD_MAP = {
   food: 'Food & Dining', lunch: 'Food & Dining', dinner: 'Food & Dining', breakfast: 'Food & Dining',
   groceries: 'Food & Dining', grocery: 'Food & Dining', restaurant: 'Food & Dining', coffee: 'Food & Dining',
@@ -102,11 +101,7 @@ export function buildBudgetTargets(region) {
   }))
 }
 
-// Real income-vs-expenses history, built from actual transactions (including
-// anything brought in via CSV import) rather than fabricated variance curves.
-// Pads backward to `monthsCount` consecutive months ending at whichever month
-// has the most recent activity, so months with no data honestly show zero
-// instead of a fake number.
+// Real income-vs-expenses history
 export function realMonthlyTrend(transactions, monthsCount = 6) {
   const grouped = {}
   transactions.forEach((t) => {
@@ -140,7 +135,7 @@ export function realMonthlyTrend(transactions, monthsCount = 6) {
 }
 
 // Live derivations — operate on whatever transaction list is passed in
-// (i.e. the localStorage-backed store), not a freshly generated mock set.
+// (i.e. the localStorage-backed store)
 export function categoryBreakdownFromTransactions(transactions) {
   const totals = {}
   transactions
@@ -171,9 +166,7 @@ export function filterTransactionsByMonth(transactions, ym) {
 }
 
 // Today's real calendar month, as a 'YYYY-MM' key — used where "current"
-// genuinely means right now (e.g. Quick Add's live available-to-spend view),
-// as distinct from "whichever month has the most recent activity" that
-// Dashboard/Budget/Analytics default to.
+// genuinely means right now (e.g. Quick Add's live available-to-spend view)
 export function currentRealMonthYm() {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`

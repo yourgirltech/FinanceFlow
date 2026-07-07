@@ -6,9 +6,7 @@ function storageKey(region, userId) {
 }
 
 // New accounts start with every category at ₦0 — budgets are something the
-// user sets deliberately (per their own "full control" model), not a number
-// we invent for them. "Reset to defaults" (below) is how they can opt into
-// a suggested starting point instead, on demand.
+// user sets deliberately (per their own "full control" model)
 function loadOrInit(region, userId) {
   const key = storageKey(region, userId)
   try {
@@ -22,14 +20,10 @@ function loadOrInit(region, userId) {
   return zeroed
 }
 
-// Rotating palette for user-created categories — distinct from the fixed
-// category colors already used (red/gold/slate/violet/emerald/amber).
+// Rotating palette for user-created categories 
 const CUSTOM_COLORS = ['#EC4899', '#06B6D4', '#F97316', '#84CC16', '#6366F1', '#14B8A6']
 
-// Lets a user set their own monthly limit per category instead of the
-// auto-generated default, and add entirely new categories of their own
-// naming — not limited to the fixed default list. Persisted per user +
-// region, same pattern as useTransactionsStore.
+// Lets a user set their own monthly limit per category 
 export function useBudgetTargetsStore(region, userId) {
   const [targets, setTargets] = useState(() => loadOrInit(region, userId))
 
