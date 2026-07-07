@@ -1,7 +1,7 @@
 import { useCountUp } from '../../lib/useCountUp'
 import { formatMoney } from '../../lib/format'
 
-export default function QuickAddSummary({ totalIncome, totalBudgeted, balance, anyOverBudget, region }) {
+export default function QuickAddSummary({ totalIncome, totalExpenses, balance, anyOverBudget, region }) {
   const animatedBalance = useCountUp(balance, { duration: 700 })
 
   return (
@@ -19,8 +19,8 @@ export default function QuickAddSummary({ totalIncome, totalBudgeted, balance, a
         </div>
         <div className="h-8 w-px bg-white/10" />
         <div>
-          <p className="text-white/40 text-[11px] mb-1">Expenses (budgeted)</p>
-          <p className="font-tabular text-red text-[15px] font-semibold">{'\u2212'}{formatMoney(totalBudgeted, region)}</p>
+          <p className="text-white/40 text-[11px] mb-1">Expenses</p>
+          <p className="font-tabular text-red text-[15px] font-semibold">{'\u2212'}{formatMoney(totalExpenses, region)}</p>
         </div>
       </div>
     </div>

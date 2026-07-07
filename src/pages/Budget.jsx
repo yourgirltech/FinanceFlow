@@ -13,7 +13,8 @@ import { computeMoneyModel } from '../lib/budgetSummary'
 
 function BudgetCard({ budget, region, onEdit, onRemove }) {
   const pct = budget.total > 0 ? Math.round((budget.spent / budget.total) * 100) : 0
-  const over = budget.spent > budget.total
+  const over = budget.total > 0 && budget.spent > budget.total
+  const unbudgeted = budget.total === 0 && budget.spent > 0
   const barColor = over ? 'var(--color-red)' : budget.color
 
   return (
@@ -59,19 +60,24 @@ function BudgetCard({ budget, region, onEdit, onRemove }) {
 
       <div className="flex items-center justify-between text-[12.5px]">
         <span className={`font-tabular font-medium ${over ? 'text-red' : 'text-navy dark:text-white'}`}>
-          {formatMoney(Math.max(budget.remaining, 0), region)} available
+          {unbudgeted ? formatMoney(budget.spent, region) : `${formatMoney(Math.max(budget.remaining, 0), region)} available`}
         </span>
         <button
           onClick={onEdit}
           className="text-slate-light dark:text-white/35 hover:text-gold hover:underline transition-colors"
         >
-          of {formatMoney(budget.total, region)}
+          {unbudgeted ? 'set a budget' : `of ${formatMoney(budget.total, region)}`}
         </button>
       </div>
 
       {over && (
         <p className="text-[11.5px] text-red mt-2 font-medium">
           Over by {formatMoney(budget.spent - budget.total, region)}
+        </p>
+      )}
+      {unbudgeted && (
+        <p className="text-[11.5px] text-slate-light dark:text-white/35 mt-2">
+          No budget set — spending here deducts straight from your balance.
         </p>
       )}
     </div>
@@ -88,7 +94,7 @@ export default function Budget() {
   const [editingBudget, setEditingBudget] = useState(null)
   const [addingCategory, setAddingCategory] = useState(false)
 
-  const { byCategory: budgets, totalBudgeted, balance, anyOverBudget, totalSpent, overallPct } =
+  const { byCategory: budgets, totalBudgeted, totalExpenses, balance, anyOverBudget, totalSpent, overallPct } =
     computeMoneyModel(transactions, targets, filtered)
 
   function handleSaveTarget(newTotal) {
@@ -130,8 +136,8 @@ export default function Budget() {
       ) : (
         <div className="rounded-2xl bg-navy dark:bg-white/[0.04] p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
           <div>
-            <p className="text-white/50 text-xs mb-1">Total budgeted (Expenses)</p>
-            <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalBudgeted, region)}</p>
+            <p className="text-white/50 text-xs mb-1">Total spent (Expenses)</p>
+            <p className="font-tabular text-white text-2xl font-semibold">{formatMoney(totalExpenses, region)}</p>
             <p className="text-white/40 text-xs mt-1">{formatMoney(totalSpent, region)} actually spent so far</p>
           </div>
           <div>

@@ -25,7 +25,7 @@ export default function QuickAdd() {
   // scoped to today's actual calendar month — not whichever month Dashboard
   // happens to be showing.
   const currentMonthTransactions = filterTransactionsByMonth(transactions, currentRealMonthYm())
-  const { totalIncome, totalBudgeted, balance, byCategory, anyOverBudget } =
+  const { totalIncome, totalExpenses, balance, byCategory, anyOverBudget } =
     computeMoneyModel(transactions, targets, currentMonthTransactions)
 
   function handleAdd(parsed) {
@@ -43,7 +43,7 @@ export default function QuickAdd() {
       <div className="max-w-2xl mx-auto">
         <QuickAddSummary
           totalIncome={totalIncome}
-          totalBudgeted={totalBudgeted}
+          totalExpenses={totalExpenses}
           balance={balance}
           anyOverBudget={anyOverBudget}
           region={region}

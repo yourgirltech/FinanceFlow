@@ -53,7 +53,7 @@ export default function Dashboard() {
   // aside across categories, counted the moment it's budgeted, not only
   // once spent). Each category's own "available to spend" only drops as
   // real expenses land against it.
-  const { totalIncome, totalBudgeted, balance, byCategory, anyOverBudget } =
+  const { totalIncome, totalExpenses, balance, byCategory, anyOverBudget } =
     computeMoneyModel(transactions, targets, filtered)
 
   const netWorth = Math.round(balance * 4.4)
@@ -106,7 +106,7 @@ export default function Dashboard() {
                 {anyOverBudget ? '⚠️' : balance >= 0 ? '🌱' : '👍'}
               </span>
               <p className="text-[13.5px] text-white/80 leading-relaxed">
-                You've budgeted <span className="text-white font-semibold font-tabular">{formatMoney(totalBudgeted, region)}</span> of{' '}
+                You've spent or allocated <span className="text-white font-semibold font-tabular">{formatMoney(totalExpenses, region)}</span> of{' '}
                 <span className="text-white font-semibold font-tabular">{formatMoney(totalIncome, region)}</span> income in {label}.{' '}
                 {anyOverBudget ? (
                   <>A category is <span className="text-red font-semibold">over its limit</span> — check Budget.</>
@@ -126,7 +126,7 @@ export default function Dashboard() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <StatCard label="Total Balance" value={balance} tone={anyOverBudget ? 'down' : 'neutral'} icon={<Icon path={icons.balance} />} />
             <StatCard label="Income" value={totalIncome} tone="up" icon={<Icon path={icons.income} />} />
-            <StatCard label="Expenses (budgeted)" value={totalBudgeted} tone="down" icon={<Icon path={icons.expenses} />} />
+            <StatCard label="Expenses" value={totalExpenses} tone="down" icon={<Icon path={icons.expenses} />} />
             <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone={anyOverBudget ? 'down' : 'up'} icon={<Icon path={icons.savings} />} />
           </div>
           <div className="mb-5">
@@ -144,7 +144,7 @@ export default function Dashboard() {
               <StatCard label="Total Balance" value={balance} tone={anyOverBudget ? 'down' : 'neutral'} icon={<Icon path={icons.balance} />} />
             </div>
             <StatCard label="Income" value={totalIncome} tone="up" icon={<Icon path={icons.income} />} />
-            <StatCard label="Expenses (budgeted)" value={totalBudgeted} tone="down" icon={<Icon path={icons.expenses} />} />
+            <StatCard label="Expenses" value={totalExpenses} tone="down" icon={<Icon path={icons.expenses} />} />
             <StatCard label="Savings Rate" value={savingsRate} isMoney={false} tone={anyOverBudget ? 'down' : 'up'} icon={<Icon path={icons.savings} />} />
             <StatCard label="Net Worth" value={netWorth} icon={<Icon path={icons.netWorth} />} />
           </div>
