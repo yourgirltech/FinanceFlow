@@ -74,7 +74,6 @@ New accounts start at **exactly zero** — no fake prepopulated demo data preten
 
 
 ## What I'd Improve Next
-
  **Real bank connection.** The "Bank Connection" option in onboarding is intentionally a disabled "Coming Soon" card. Wiring up a real aggregator (Plaid, Mono, or Okra depending on region) is the natural next step once there's a real database to sync against.
  **A genuine Net Worth model.** Right now it's a simplified multiplier off Balance — an honest assetsminusliabilities model (savings, investments, debts) is the real next version.
  **Hard access control everywhere.** Involvement tier gating is enforced for Budget and Analytics specifically; worth auditing the rest of the app the same way.
