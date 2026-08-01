@@ -1,6 +1,6 @@
 import { filterTransactionsByMonth, totalsFromTransactions } from './mockData'
 
-function shiftYm(ym, delta) {
+export function shiftYm(ym, delta) {
   const [y, m] = ym.split('-').map(Number)
   const d = new Date(y, m - 1 + delta, 1)
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`

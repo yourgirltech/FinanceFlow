@@ -19,6 +19,7 @@ const Analytics = lazy(() => import('./pages/Analytics'))
 const Settings = lazy(() => import('./pages/Settings'))
 const QuickAdd = lazy(() => import('./pages/QuickAdd'))
 const ImportStatement = lazy(() => import('./pages/ImportStatement'))
+const AIInsights = lazy(() => import('./pages/AIInsights'))
 
 function PageFallback() {
   return (
@@ -46,6 +47,7 @@ function AppRoot() {
             <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
             <Route path="/import" element={<ProtectedRoute><ImportStatement /></ProtectedRoute>} />
             <Route path="/budget" element={<ProtectedRoute><TierGate requiredTier="simple"><Budget /></TierGate></ProtectedRoute>} />
+            <Route path="/ai-insights" element={<ProtectedRoute><AIInsights /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><TierGate requiredTier="power"><Analytics /></TierGate></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Routes>

@@ -38,7 +38,14 @@ The trickier design decision was the fallback case: **what happens if someone ne
 Transactions, Dashboard, Budget, and Quick Add all read from **one shared calculation** (`computeMoneyModel()`), not four separate copies of similar logic. Set a budget, log an expense through Quick Add, and watch the same number update on the Budget page and the Dashboard simultaneously — because it's the same number, computed once.
 
 ### Honesty as a design principle
-New accounts start at **exactly zero** — no fake prepopulated demo data pretending to be yours. The AI insights panel only shows an observation when there's real signal behind it (an actual monthovermonth comparison, an actual savings goal you set); otherwise it says so plainly rather than showing something plausiblebutinvented. The 6month trend chart shows real gaps as zero rather than a smoothed fake curve. This cost some "wow, it's already populated" polish on first login, but I'd rather the product tell the truth.
+New accounts start at **exactly zero** — no fake prepopulated demo data pretending to be yours. The computed insights panel only shows an observation when there's real signal behind it (an actual monthovermonth comparison, an actual savings goal you set); otherwise it says so plainly rather than showing something plausiblebutinvented. The 6month trend chart shows real gaps as zero rather than a smoothed fake curve. This cost some "wow, it's already populated" polish on first login, but I'd rather the product tell the truth.
+
+### Two kinds of "insight" — and why both stay
+Early on, "no external AI API" was a genuine point of pride for this project — the Dashboard's insights panel reads like AI-generated advice, but every word of it traces back to a pure function doing real arithmetic on real transactions. No key to manage, no latency, no cost, nothing to hallucinate.
+
+Adding a real Claude-powered assistant on top of that felt at first like it would undercut the whole pitch. The resolution was to treat them as two different tools for two different jobs, not one replacing the other. Computed rules are the right choice for *"did my spending change and by how much"* — that's a comparison, not a judgment call, and it should stay instant, free, and independently verifiable. But *"where can I cut back?"* isn't a comparison — it's a judgment call across multiple categories, a budget, and a stated goal, weighed against each other in a way that's genuinely hard to hand-code well. That's the kind of open-ended reasoning an LLM is actually good for, so it got its own page instead of quietly replacing the thing that already worked.
+
+The honesty principle didn't get relaxed for the new feature — it got extended to it. The AI Assistant is handed a compact, structured snapshot of the user's real numbers (never a live database connection, never the ability to invent a transaction) and its system prompt explicitly instructs it to ground every claim in that data and say "I don't have enough information" rather than guess. The free insights panel and the Claude-powered one now make the same promise; they just answer different kinds of questions.
 
 
 
@@ -50,7 +57,11 @@ New accounts start at **exactly zero** — no fake prepopulated demo data preten
  **Recharts** for the trend, bar, and donut charts
  **Papaparse** and **SheetJS (xlsx)** for CSV and Excel statement import, sharing one columndetection and categorization pipeline regardless of file format
  **localStorage** as the data layer for everything else — deliberately architected behind hooks (`useTransactionsStore`, `useBudgetTargetsStore`, `useSavingsGoal`) so the storage backend can be swapped for a real database later without touching a single page component
- **No external AI API.** The insights panel — trend detection, budget pacing projections, savingsgoal timelines, recurringcharge detection — is entirely computed from the user's real data in the browser. It reads like AIgenerated insight without the cost, latency, or key management of an LLM call, and every number in it is independently verifiable against the user's own transactions.
+ **Computed insights, no API call.** The Dashboard's insights panel — trend detection, budget pacing projections, savingsgoal timelines, recurringcharge detection — is entirely computed from the user's real data in the browser: no cost, no latency, and every number in it is independently verifiable against the user's own transactions.
+ **Anthropic's Claude API (Sonnet 5)** for the AI Assistant — a genuinely LLM-powered natural-language read on spending and free-form Q&A, layered on top of (not replacing) the computed insights panel
+ **TanStack Query** to manage the AI Assistant's async state — caching the auto-generated summary per month so switching tabs doesn't re-spend tokens, and driving the chat mutation's loading/streaming/error states
+ **A Netlify Function** (`netlify/functions/spending-insights.mjs`) as a thin server-side proxy — the only piece of custom backend in an otherwise fully client-side app, which exists purely so the Anthropic API key never has to touch the browser. It checks the caller's Supabase session before forwarding anything to Claude, so the endpoint can't be hit anonymously to burn through my API budget
+ **Vitest + React Testing Library** for tests — unit tests on the pure data-shaping functions (`financialSnapshot.js`), and component tests on both the new AI chat UI and the pre-existing insights panel, with the streaming fetch mocked so the suite costs nothing and runs offline
  **Netlify + GitHub** for hosting, with continuous deployment on every push to `main`
 
 
@@ -71,6 +82,10 @@ New accounts start at **exactly zero** — no fake prepopulated demo data preten
 
 **Designing for a fallback, not just the happy path.** The envelopebudgeting model looked complete until I asked: what about someone who never sets a budget at all? Rather than bolt on a special case, the cleaner fix was a percategory rule that made both behaviors — budgeted and unbudgeted — fall out of the same formula naturally.
 
+**A 100%clientside app suddenly needed a backend.** Everything else in this project runs entirely in the browser, which is exactly why calling the Claude API directly from client code was a nonstarter — it would ship my API key to anyone who opened devtools. The fix was the smallest possible backend: a single Netlify Function that does nothing but verify the caller's Supabase session and forward a request to Claude, streaming the reply straight back. It's the only serverside code in the entire app, and it exists for one reason: key custody.
+
+**Deciding what data actually needs to leave the browser.** The tempting shortcut was to just serialize the whole transaction list and let Claude figure it out. Instead, `financialSnapshot.js` precomputes the comparisons (this month vs. last, vs. a 3month average, budget vs. actual) and sends *that* — smaller payload, cheaper tokens, and the model never sees more of a user's raw spending history than it needs to answer the question in front of it.
+
 
 
 ## What I'd Improve Next
@@ -78,9 +93,10 @@ New accounts start at **exactly zero** — no fake prepopulated demo data preten
  **A genuine Net Worth model.** Right now it's a simplified multiplier off Balance — an honest assetsminusliabilities model (savings, investments, debts) is the real next version.
  **Hard access control everywhere.** Involvement tier gating is enforced for Budget and Analytics specifically; worth auditing the rest of the app the same way.
  **Buy a domain and verify it with Resend**, so real signup emails work for any user, not just accounts tied to my own sending address.
+ **Real rate limiting on the AI endpoint.** Right now the Netlify Function checks that the caller is a logged-in Supabase user, which stops anonymous abuse, but a logged-in user could still hammer it. A production version would add per-user request limits before this ever ran at real scale.
 
 
 
 ## One Promise
 
-If you give Finance Flow real numbers, it will never show you a number it made up to fill space. Every balance, every trend, every insight traces back to something you actually entered — and when there isn't enough data to say something true, it says nothing, rather than something plausible.
+If you give Finance Flow real numbers, it will never show you a number it made up to fill space. Every balance, every trend, every insight traces back to something you actually entered — and when there isn't enough data to say something true, it says nothing, rather than something plausible. That promise didn't get an exception when the AI Assistant arrived — it got a system prompt: Claude is handed the same real, computed snapshot the rest of the app trusts, and told explicitly to say "I don't have enough information" rather than invent an answer.

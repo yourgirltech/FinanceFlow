@@ -37,6 +37,18 @@ const ALL_NAV_ITEMS = [
     icon: <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v9l6.5 3.5" strokeLinecap="round" strokeLinejoin="round" />,
   },
   {
+    to: '/ai-insights',
+    label: 'AI Assistant',
+    tier: 'simple',
+    icon: (
+      <path
+        d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16zM19 15l.7 1.6L21.3 17l-1.6.7L19 19.3l-.7-1.6L16.7 17l1.6-.7L19 15z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
     to: '/analytics',
     label: 'Analytics',
     tier: 'power',
